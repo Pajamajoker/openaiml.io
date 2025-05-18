@@ -104,7 +104,7 @@
 		--fg-hue: var(--hue); /* Общий цвет-оттенок для рассчета градаций цвета */
 		--fg-saturation: var(--saturation); /* Общая насыщенность для рассчета градаций цвета с оттенком, 0% - нет оттенка */
 		--fg-brightness: 9%; /* Яркость для рассчета градаций цвета с оттенком, 0% - начиная от абсолютно черного */
-		--theme-text: var(--theme-color-500); /* Цвет-яркость текста уже с адаптацией под цвет фона */ 
+		--theme-text: var(--theme-color-000); /* Цвет-яркость текста уже с адаптацией под цвет фона */ 
 
 		/*** ВТОРОСТЕПЕННЫЕ ЦВЕТА (Внешние ссылки, нейтральный акцент, цитаты) ***/
 		--theme-link: var(--hue) 97% 31%; /* Цвет внешних ссылок */
@@ -362,4 +362,12 @@
 	article mark {
 		@apply bg-transparent;
 	}
+}
+
+.prose blockquote p:first-of-type::before,
+.prose blockquote p:first-of-type::after {
+  content: none !important;
+}
+.prose blockquote {
+  font-style: normal;
 }

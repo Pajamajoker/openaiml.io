@@ -40,10 +40,13 @@ import { Icon } from "astro-icon/components";
 					</svg>
 				</div>
 				-->
-				<div title={siteConfig.title}>
-					<svg class="inline-block size-8 fill-current text-accent-base dark:text-accent-two drop-shadow-[0px_2.5px_2.5px_rgba(0,0,0,0.35)]">
-						<use href="/brand.svg#citrus"></use>
-					</svg>
+				<div title={siteConfig.title} class="relative inline-block">
+				<div class="absolute inset-0 rounded-full bg-[radial-gradient(circle,_white_0%,_transparent_10%)] blur-sm z-0 w-full h-full"></div>
+				<img 
+					src="/brand-unscreen.gif" 
+					alt="Site logo" 
+					class="relative inline-block w-16 h-16 z-10"
+				/>
 				</div>
 				
 				<strong class="'max-[320px]:hidden' bg-clip-text text-transparent bg-gradient-to-r from-accent-one to-accent-two hidden xs:block z-10 mb-0.5 ms-2 text-2xl group-hover:text-accent-one">
@@ -94,13 +97,13 @@ import { Icon } from "astro-icon/components";
 					))
 				}
 				
-				<a
+				<!-- <a
 					class="flex h-8 items-center rounded-lg bg-accent-base/5 px-4 text-accent-base underline-offset-2 hover:bg-accent-base/10"
 					data-astro-prefetch
 					href="/posts/citrus-docs/intro/"
 				>
 					Docs
-				</a>
+				</a> -->
 				
 				<!-- Dropdown menu button for large screens. Needs improvement. -->
 				<!--
@@ -229,13 +232,13 @@ import { Icon } from "astro-icon/components";
 					</a>
 				))
 			}
-			<a
+			<!-- <a
 				class="flex h-8 items-center rounded-lg bg-accent-base/5 px-4 text-accent-base underline-offset-2 hover:bg-accent-base/10"
 				data-astro-prefetch
 				href="/series/citrus-docs"
 			>
 				Docs
-			</a>
+			</a> -->
 		</nav>
 	</div>
 </div>

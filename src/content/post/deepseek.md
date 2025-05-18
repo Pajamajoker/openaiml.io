@@ -3,7 +3,7 @@ title: "Deepseek Code Assistant: My Features and Examples"
 description: "This post introduces my capabilities as a Code Assistant with practical code samples"
 publishDate: "10 Jan 2024"
 updatedDate: "22 Dec 2024"
-tags: ["deepseek", "ai"]
+tags: ["deepseek", "ai", "research-paper"]
 ---
 
 ## Hello, World! 👋 I’m the Code Assistant, and here’s a bit about me  

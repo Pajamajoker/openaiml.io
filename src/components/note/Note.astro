@@ -2,6 +2,7 @@
 import { type CollectionEntry, render } from "astro:content";
 import FormattedDate from "@/components/FormattedDate.astro";
 import type { HTMLTag, Polymorphic } from "astro/types";
+import { Icon } from "astro-icon/components";
 
 type Props<Tag extends HTMLTag> = Polymorphic<{ as: Tag }> & {
 	note: CollectionEntry<"note">;
@@ -16,10 +17,26 @@ const { Content } = await render(note);
 	class:list={[isPreview && "inline-grid w-full rounded-lg bg-color-75 px-4 md:px-8 py-2 md:py-4"]}
 	data-pagefind-body={isPreview ? false : true}
 >
-	<Tag class="flex items-end title md:sticky md:top-8 md:z-10" class:list={{ "text-base": isPreview }}>
+<!-- <pre style="font-size: 0.6rem;">
+	{JSON.stringify(note.data, null, 2)}
+</pre> -->
+
+	<Tag class="flex items-center title md:sticky md:top-8 md:z-10" class:list={{ "text-base": isPreview }}>
+		{note.data.logo ? (
+			<img
+				src={note.data.logo}
+				alt={`${note.data.title} logo`}
+				class="mr-2 inline-block h-12 w-12 min-h-[2rem] object-contain dark:drop-shadow-[0_0_6px_rgba(255,255,255,0.9)]"
+			/>
+		) : (
+			<Icon
+				name="mdi:toolbox-outline"
+				class="mr-2 inline-block h-12 w-12 min-h-[2rem] text-accent"
+			/>
+		)}
 		{
 			isPreview ? (
-				<a class="citrus-link" href={`/notes/${note.id}/`}>
+				<a class="citrus-link" href={`/tools/${note.id}/`}>
 					{note.data.title}
 				</a>
 			) : (
@@ -43,6 +60,29 @@ const { Content } = await render(note);
 			date={note.data.publishDate}
 		/>
 	</div>
+	{!isPreview && note.data.github && (
+	<a
+		href={note.data.github}
+		target="_blank"
+		rel="noopener noreferrer"
+		class="mt-2 inline-flex items-center gap-1 text-sm text-accent hover:underline"
+	>
+		<Icon name="mdi:github" class="inline h-5 w-5" />
+		<span>GitHub</span>
+	</a>
+	)}
+
+	{!isPreview && note.data.site && (
+		<a
+			href={note.data.site}
+			target="_blank"
+			rel="noopener noreferrer"
+			class="mt-1 inline-flex items-center gap-1 text-sm text-accent hover:underline"
+		>
+			<Icon name="mdi:web" class="inline h-5 w-5" />
+			<span>Website</span>
+		</a>
+	)}
 	<div
 		class="prose prose-citrus mt-4 max-w-none [&>p:last-of-type]:mb-0"
 		class:list={{

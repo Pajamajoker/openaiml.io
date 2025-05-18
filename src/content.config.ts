@@ -46,6 +46,9 @@ const note = defineCollection({
 			.string()
 			.datetime({ offset: true }) // Ensures ISO 8601 format with offsets allowed (e.g. "2024-01-01T00:00:00Z" and "2024-01-01T00:00:00+02:00")
 			.transform((val) => new Date(val)),
+		logo: z.string().optional(),     // ✅ path to logo in /public/logos/
+		github: z.string().url().optional(), // ✅ GitHub link
+		site: z.string().url().optional(),   // ✅ Project site link
 	}),
 });
 
