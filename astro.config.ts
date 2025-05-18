@@ -115,7 +115,7 @@ export default defineConfig({
   // https://docs.astro.build/en/guides/prefetch/
   prefetch: true,
   // ! Please remember to replace the following site property with your own domain
-  site: "http://astrocitrus.artemkutsan.pp.ua/",
+  site: "http://openaiml.io",
   vite: {
     build: {
       sourcemap: true, // Source maps generation
@@ -148,6 +148,8 @@ export default defineConfig({
     // port: 1234,
     host: true,
   },
+  output: 'static',
+  base: '/',
 });
 
 function rawFonts(ext: string[]) {
