@@ -46,26 +46,27 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
 			<!-- <div class="flex justify-center mb-4">
 				<SocialList />
 			</div> -->
-			<div class="flex justify-center mt-4">
-				<form 
-					action="https://formspree.io/f/your-form-id" 
-					method="POST"
-					class="flex items-center space-x-2"
-				>
+			<div class="flex justify-center mt-4 flex-col items-center">
+				<form id="subscribe-form" class="flex items-center space-x-2">
 					<input 
-						type="email" 
-						name="email" 
-						required 
-						placeholder="Enter your email" 
-						class="px-4 py-1.5 h-8 rounded-lg shadow-md text-sm focus:outline-none w-48 sm:w-64"
+					id="email-input"
+					type="email" 
+					name="email" 
+					required 
+					placeholder="Enter your email" 
+					class="px-4 py-1.5 h-8 rounded-lg shadow-md text-sm focus:outline-none w-48 sm:w-64"
 					/>
 					<button 
-						type="submit" 
-						class="h-8 px-4 rounded-lg shadow-lg hover:brightness-110 transition-all bg-gradient-to-r from-accent-one to-accent-two text-bgColor font-semibold"
+					type="submit" 
+					class="h-8 px-4 rounded-lg shadow-lg hover:brightness-110 transition-all bg-gradient-to-r from-accent-one to-accent-two text-bgColor font-semibold"
 					>
-						Subscribe
+					<span id="button-text">Subscribe</span>
+					<span id="button-loader" class="hidden animate-spin ml-2">⏳</span>
 					</button>
 				</form>
+
+				<!-- ✅ Now it appears *below* the form -->
+				<p id="status-msg" class="mt-2 text-sm text-green-600 hidden">Subscribed successfully!</p>
 			</div>
 			<p class="mt-4 mb-4 text-sm font-medium">
 				No spam. No “basic” content. Just high-quality, Open content worth learning from — posted twice a week.  
@@ -155,3 +156,51 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
 	-->
 </PageLayout>
 
+<script>
+  const form = document.getElementById('subscribe-form');
+  const emailInput = document.getElementById('email-input');
+  const statusMsg = document.getElementById('status-msg');
+  const buttonText = document.getElementById('button-text');
+  const buttonLoader = document.getElementById('button-loader');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const email = emailInput.value;
+    const secret = "your-super-secret-key";
+    const endpoint = "https://script.google.com/macros/s/AKfycbxK28bL7ModFjNsbuS7oTkje9H-89MjEPCdTlc8Pt0o7J0CrQsIQ0ZlDL0c3HDk3ZBDBg/exec";
+
+    // Show loader, hide button text
+    buttonText.classList.add('hidden');
+    buttonLoader.classList.remove('hidden');
+    statusMsg.classList.add("hidden");
+
+    try {
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ email, action: 'subscribe', secret })
+      });
+
+      const text = await res.text();
+      if (text.includes("Subscribed")) {
+        statusMsg.textContent = "🎉 Subscribed successfully!";
+        statusMsg.classList.remove("hidden");
+        statusMsg.classList.replace("text-red-600", "text-green-600");
+        emailInput.value = "";
+      } else {
+        statusMsg.textContent = "⚠️ Error: " + text;
+        statusMsg.classList.remove("hidden");
+        statusMsg.classList.replace("text-green-600", "text-red-600");
+      }
+    } catch (err) {
+      statusMsg.textContent = "❌ Network error. Please try again.";
+      statusMsg.classList.remove("hidden");
+      statusMsg.classList.replace("text-green-600", "text-red-600");
+    }
+
+    // Hide loader, show button text
+    buttonText.classList.remove('hidden');
+    buttonLoader.classList.add('hidden');
+  });
+</script>
