@@ -1,0 +1,100 @@
+---
+import PageLayout from "@/layouts/Base.astro";
+
+const meta = {
+	description: "I'm a starter theme for Astro.build",
+	title: "About",
+};
+---
+
+<PageLayout meta={meta}>
+	<h1 class="title mb-6">Support & More</h1>
+	<div class="mt-4">
+
+		<p class="mt-4 mb-4 text-medium font-small"> 
+				If you wish to support the purpose of this website and / or contribute to Blogs, please email me at support@openaiml.io
+		</p>
+		
+		<p class="mt-4 mb-4 text-medium font-small">
+			If you wish to no longer receive emails, you can click the unsubscribe button below! :(
+		</p>
+		<button
+			onclick="document.getElementById('unsubscribe-form-container').classList.toggle('hidden')"
+			class="px-4 py-1.5 h-8 rounded-lg shadow-md text-sm bg-gradient-to-r from-red-400 to-red-600 text-white font-semibold hover:brightness-110"
+		>
+			Unsubscribe
+		</button>
+
+		<div id="unsubscribe-form-container" class="hidden mt-3">
+			<form
+				id="unsubscribe-form"
+				class="flex flex-col sm:flex-row sm:items-center gap-2"
+			>
+				<input
+					id="unsubscribe-email-input"
+					type="email"
+					name="email"
+					required
+					placeholder="Enter your email to unsubscribe"
+					class="px-4 py-1.5 h-8 rounded-lg shadow-md text-sm focus:outline-none w-64"
+				/>
+				<button
+					type="submit"
+					class="h-8 px-4 rounded-lg shadow-lg bg-red-500 hover:bg-red-600 text-white font-semibold"
+				>
+					Confirm
+				</button>
+			</form>
+			<p
+				id="unsubscribe-status-msg"
+				class="mt-2 text-sm hidden text-green-600"
+			>
+				Unsubscribed successfully!
+			</p>
+			<p class="text-xs text-gray-500 mt-2">
+				PS: Every email we send includes a 1-click unsubscribe link at
+				the bottom.
+			</p>
+		</div>
+	</div>
+</PageLayout>
+
+<script>
+  const unsubForm = document.getElementById('unsubscribe-form');
+  const unsubEmailInput = document.getElementById('unsubscribe-email-input');
+  const unsubStatusMsg = document.getElementById('unsubscribe-status-msg');
+
+  unsubForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const email = unsubEmailInput.value;
+    const secret = "your-super-secret-key";
+    const endpoint = "https://script.google.com/macros/s/AKfycbxK28bL7ModFjNsbuS7oTkje9H-89MjEPCdTlc8Pt0o7J0CrQsIQ0ZlDL0c3HDk3ZBDBg/exec";
+
+    unsubStatusMsg.classList.add("hidden");
+
+    try {
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ email, action: 'unsubscribe', secret })
+      });
+
+      const text = await res.text();
+      if (text.includes("Unsubscribed")) {
+        unsubStatusMsg.textContent = "✅ Unsubscribed successfully.";
+        unsubStatusMsg.classList.remove("hidden");
+        unsubStatusMsg.classList.replace("text-red-600", "text-green-600");
+        unsubEmailInput.value = "";
+      } else {
+        unsubStatusMsg.textContent = "⚠️ Error: " + text;
+        unsubStatusMsg.classList.remove("hidden");
+        unsubStatusMsg.classList.replace("text-green-600", "text-red-600");
+      }
+    } catch (err) {
+      unsubStatusMsg.textContent = "❌ Network error. Please try again.";
+      unsubStatusMsg.classList.remove("hidden");
+      unsubStatusMsg.classList.replace("text-green-600", "text-red-600");
+    }
+  });
+</script>
