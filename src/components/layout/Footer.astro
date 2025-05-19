@@ -17,6 +17,7 @@ const year = new Date().getFullYear();
 	>
 		{
 			menuLinks.map((link) => (
+                                if( link && link.path && link.path !== "/support/") 
 				<a class="underline-offset-2 hover:text-accent hover:underline" href={link.path}>
 					{link.title}
 				</a>
