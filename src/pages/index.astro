@@ -24,14 +24,12 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
 <PageLayout meta={{ title: "Home" }}>
 	<!-- Hero section -->
 	<!-- Background blur -->
-	<div class="absolute top-0 left-1/2 md:top-[-15%] -ml-[50vw] min-h-screen w-screen pointer-events-none blur-3xl opacity-50 overflow-x-hidden">
-		<div class="absolute top-[10%] right-[-40%] w-[65%] h-full bg-gradient-to-b from-purple-300 via-blue-300 to-transparent rounded-full opacity-30 dark:opacity-10"></div>
-		<div class="absolute top-[10%] left-[-40%] w-[65%] h-full bg-gradient-to-b from-blue-300 via-pink-300 to-transparent rounded-full opacity-30 dark:opacity-10"></div>
+		<div class="absolute top-0 left-1/2 md:top-[-15%] -ml-[50vw] h-full w-full max-w-full pointer-events-none blur-3xl opacity-50 overflow-x-hidden">		<div class="absolute top-[10%] left-[-40%] w-[65%] h-full bg-gradient-to-b from-blue-300 via-pink-300 to-transparent rounded-full opacity-30 dark:opacity-10"></div>
 		<div class="absolute top-[-20%] left-[-50%] w-[85%] h-full bg-gradient-to-b from-indigo-300 via-orange-300 to-transparent rounded-full opacity-60 dark:opacity-10"></div>
 		<div class="absolute top-[-20%] right-[-50%] w-[85%] h-full bg-gradient-to-b from-orange-300 via-indigo-300 to-transparent rounded-full opacity-60 dark:opacity-10"></div>
 	</div>
-	<section class="max-w-xl mx-auto relative flex items-center justify-center h-screen -mt-24">
-		<div class="w-full text-center">
+			<section class="max-w-xl mx-auto relative flex items-center justify-center min-h-[90vh] sm:min-h-[85vh] md:min-h-[75vh] lg:min-h-[70vh] px-4 sm:px-0">
+			<div class="w-full text-center">
 			<span class="title text-2xl bg-gradient-to-r from-accent-two/85 via-accent-one/85 to-accent-two/85 dark:from-accent-two dark:via-accent-one dark:to-accent-two bg-clip-text text-transparent">
 			Welcome to OpenAI/ML!
 			</span>
@@ -61,7 +59,7 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
 					name="email" 
 					required 
 					placeholder="Enter your email" 
-					class="px-4 py-1.5 h-8 rounded-lg shadow-md text-sm focus:outline-none w-48 sm:w-64"
+					class="px-4 py-2 h-10 rounded-lg shadow-md text-sm focus:outline-none w-full max-w-xs"
 					/>
 					<button 
 					type="submit" 
@@ -95,7 +93,7 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
 		</div>
 	</section>
 	<!-- Posts Section -->
-	<section aria-label="Blog post list" class="'mt-[-100vh] pt-[100vh]'">
+	<section aria-label="Blog post list" class="mt-12 px-4 sm:px-0">
 		<h2 class="title mb-6 text-xl text-accent-two">
 			<a href="/posts/">Posts</a>
 		</h2>
@@ -115,7 +113,7 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
 		latestNotes.length > 0 && (
 			<section class="mt-12">
 				<h2 class="title mb-6 text-accent-two">
-					<a href="/notes/">Notes</a>
+					<a href="/notes/">Tools & Stack</a>
 				</h2>
 				<div class="grid grid-cols-1 gap-8 sm:grid-cols-2">
 					{
