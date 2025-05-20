@@ -68,7 +68,9 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
 					class="h-8 px-4 rounded-lg shadow-lg hover:brightness-110 transition-all bg-gradient-to-r from-accent-one to-accent-two text-bgColor font-semibold"
 					>
 					<span id="button-text">Subscribe</span>
-					<span id="button-loader" class="hidden animate-spin ml-2">⏳</span>
+					<span id="button-loader" class="hidden ml-2">
+					<span class="inline-block animate-spin">⏳</span>
+					</span>
 					</button>
 				</form>
 

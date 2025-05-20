@@ -349,5 +349,6 @@ export default {
     "text-color-100",
     "text-color-75",
     "text-color-50",
+    "animate-spin"
   ],
 } satisfies Config;

@@ -26,25 +26,26 @@ const meta = {
 		</button>
 
 		<div id="unsubscribe-form-container" class="hidden mt-3">
-			<form
-				id="unsubscribe-form"
-				class="flex flex-col sm:flex-row sm:items-center gap-2"
+		<form
+			id="unsubscribe-form"
+			class="flex flex-col sm:flex-row sm:items-center gap-2"
+		>
+			<input
+				id="unsubscribe-email-input"
+				type="email"
+				name="email"
+				required
+				placeholder="Enter your email to unsubscribe"
+				class="px-4 py-1.5 h-8 rounded-lg shadow-md text-sm focus:outline-none w-64"
+			/>
+			<button
+				type="submit"
+				class="h-8 px-4 rounded-lg shadow-lg bg-red-500 hover:bg-red-600 text-white font-semibold flex items-center"
 			>
-				<input
-					id="unsubscribe-email-input"
-					type="email"
-					name="email"
-					required
-					placeholder="Enter your email to unsubscribe"
-					class="px-4 py-1.5 h-8 rounded-lg shadow-md text-sm focus:outline-none w-64"
-				/>
-				<button
-					type="submit"
-					class="h-8 px-4 rounded-lg shadow-lg bg-red-500 hover:bg-red-600 text-white font-semibold"
-				>
-					Confirm
-				</button>
-			</form>
+				<span id="unsub-button-text">Confirm</span>
+				<span id="unsub-button-loader" class="hidden animate-spin ml-2">⏳</span>
+			</button>
+		</form>
 			<p
 				id="unsubscribe-status-msg"
 				class="mt-2 text-sm hidden text-green-600"
@@ -63,6 +64,8 @@ const meta = {
   const unsubForm = document.getElementById('unsubscribe-form');
   const unsubEmailInput = document.getElementById('unsubscribe-email-input');
   const unsubStatusMsg = document.getElementById('unsubscribe-status-msg');
+  const unsubButtonText = document.getElementById('unsub-button-text');
+  const unsubButtonLoader = document.getElementById('unsub-button-loader');
 
   unsubForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -71,6 +74,9 @@ const meta = {
     const secret = "your-super-secret-key";
     const endpoint = "https://script.google.com/macros/s/AKfycbxK28bL7ModFjNsbuS7oTkje9H-89MjEPCdTlc8Pt0o7J0CrQsIQ0ZlDL0c3HDk3ZBDBg/exec";
 
+    // Show loader, hide button text
+    unsubButtonText.classList.add('hidden');
+    unsubButtonLoader.classList.remove('hidden');
     unsubStatusMsg.classList.add("hidden");
 
     try {
@@ -96,5 +102,9 @@ const meta = {
       unsubStatusMsg.classList.remove("hidden");
       unsubStatusMsg.classList.replace("text-green-600", "text-red-600");
     }
+
+    // Hide loader, show button text
+    unsubButtonText.classList.remove('hidden');
+    unsubButtonLoader.classList.add('hidden');
   });
 </script>
