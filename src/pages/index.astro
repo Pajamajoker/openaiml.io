@@ -163,6 +163,8 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
 	-->
 </PageLayout>
 
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
 <script>
   const form = document.getElementById('subscribe-form');
   const emailInput = document.getElementById('email-input');
@@ -170,6 +172,66 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
   const buttonText = document.getElementById('button-text');
   const buttonLoader = document.getElementById('button-loader');
 
+  function launchConfetti() {
+    const duration = 2.5 * 1000;
+    const animationEnd = Date.now() + duration;
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
+
+    const interval = setInterval(function() {
+      const timeLeft = animationEnd - Date.now();
+
+      if (timeLeft <= 0) {
+        return clearInterval(interval);
+      }
+
+      const particleCount = 50 * (timeLeft / duration);
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: Math.random(), y: Math.random() - 0.2 }
+      });
+    }, 250);
+  }
+
+  function blastRobots() {
+  const robotCount = 100;
+
+  for (let i = 0; i < robotCount; i++) {
+    const robot = document.createElement('div');
+    robot.textContent = '🤖';
+    robot.style.position = 'fixed';
+    robot.style.left = `${Math.random() * 100}vw`;
+    robot.style.top = `-50px`; // Start slightly above viewport for smooth entry
+    robot.style.fontSize = `${Math.random() * 24 + 24}px`;
+    robot.style.zIndex = 9999;
+
+    // Random delay before starting animation (0 to 4 seconds)
+    const delay = Math.random() * 4000;
+    const duration = 2 + Math.random() * 2; // 4-6 seconds fall time
+
+    // Apply animation with delay
+    robot.style.animation = `fall ${duration}s ease-out forwards`;
+    robot.style.animationDelay = `${delay}ms`;
+
+    document.body.appendChild(robot);
+
+    // Remove robot after its animation finishes (delay + duration)
+    setTimeout(() => robot.remove(), delay + duration * 1000);
+  }
+
+  if (window.navigator.vibrate) {
+    window.navigator.vibrate(300);
+  }
+}
+
+	const style = document.createElement('style');
+	style.innerHTML = `
+	@keyframes fall {
+		from { transform: translateY(0) rotate(0deg); opacity: 1; }
+		to { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+	}
+	`;
+	document.head.appendChild(style);
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -195,6 +257,10 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
         statusMsg.classList.remove("hidden");
         statusMsg.classList.replace("text-red-600", "text-green-600");
         emailInput.value = "";
+        // 🎊 Trigger Confetti
+		launchConfetti();
+		blastRobots();
+
       } else {
         statusMsg.textContent = "⚠️ Error: " + text;
         statusMsg.classList.remove("hidden");
@@ -211,3 +277,4 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
     buttonLoader.classList.add('hidden');
   });
 </script>
+
