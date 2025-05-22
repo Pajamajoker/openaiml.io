@@ -45,47 +45,51 @@ const fallbackReadersCount = Math.floor(Math.random() * 11) + 2;
 		["Make AI Great Again!", "Donald Trump"],
 	];
 
-	let currentMessageIndex = 0;
-	let loadingDuration = 0;
-	function showNextMessage(endTime) {
-		const messageEl = document.getElementById("loading-quote");
-		const authorEl = document.getElementById("loading-author");
-
-		const [quote, author] =
-			messages[Math.floor(Math.random() * messages.length)];
-		messageEl.textContent = `“${quote}”`;
-		authorEl.textContent = `– ${author}`;
-
-		const now = Date.now();
-		const displayTime = 1000 + quote.length * 60;
-
-		// If time left > displayTime, show another one
-		if (now + displayTime < endTime) {
-			setTimeout(() => showNextMessage(endTime), displayTime);
+	function handleLoadingScreen() {
+		const html = document.documentElement;
+		const loadingScreen = document.getElementById("loading-screen");
+		
+		// Show loading state
+		html.classList.add("loading");
+		
+		function showRandomMessage() {
+			const [quote, author] = messages[Math.floor(Math.random() * messages.length)];
+			document.getElementById("loading-quote").textContent = `"${quote}"`;
+			document.getElementById("loading-author").textContent = `– ${author}`;
 		}
+		
+		// Initial message
+		showRandomMessage();
+		
+		// Change message every 2 seconds
+		const messageInterval = setInterval(showRandomMessage, 2000);
+		
+		// Remove loading screen after delay
+		setTimeout(() => {
+			loadingScreen.classList.add("fade-out");
+			
+			setTimeout(() => {
+				loadingScreen.remove();
+				html.classList.remove("loading");
+				clearInterval(messageInterval);
+				
+				// Force enable scrolling
+				html.style.overflow = "";
+				html.style.touchAction = "";
+			}, 500); // Match CSS transition duration
+		}, 3500);
 	}
-
-	window.addEventListener("DOMContentLoaded", () => {
-		document.documentElement.classList.add("loading");
-
-		const endTime = Date.now() + 3500;
-		showNextMessage(endTime);
-
-		setTimeout(() => {
-			document.getElementById("loading-screen").classList.add("fade-out");
-		}, 3000);
-
-		setTimeout(() => {
-			document.getElementById("loading-screen").style.display = "none";
-			document.documentElement.classList.remove("loading");
-		}, 4200);
-	});
+	
+	// Single event listener
+	document.addEventListener("DOMContentLoaded", handleLoadingScreen, { once: true });
 </script>
 
 <style>
 	html.loading {
-		overflow: hidden;
-		touch-action: none;
+		overflow: hidden !important;
+		height: 100%;
+		position: fixed;
+		width: 100%;
 	}
 
 	#loading-screen {
@@ -98,9 +102,7 @@ const fallbackReadersCount = Math.floor(Math.random() * 11) + 2;
 		backdrop-filter: blur(30px);
 		-webkit-backdrop-filter: blur(30px);
 		z-index: 9999;
-		transition: opacity 0.5s ease-in-out;
-		opacity: 1;
-		padding: 1rem;
+		transition: opacity 0.5s ease;
 	}
 
 	#loading-screen.fade-out {
