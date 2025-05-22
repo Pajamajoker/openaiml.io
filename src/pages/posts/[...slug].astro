@@ -20,44 +20,44 @@ const fallbackReadersCount = Math.floor(Math.random() * 11) + 2;
 ---
 
 <script define:vars={{ postId: post.id }}>
-  window.__POST_ID__ = postId;
+	window.__POST_ID__ = postId;
 </script>
 
 <script>
+	let messages = [
+		["Read it or regret it.", "Albert Ehh?stein"],
+		["Books > Biceps.", "Arnold Shelfzenegger"],
+		["Scroll smart.", "Scrollon Musk"],
+		["Think faster, read shorter.", "Isaac Meh-ton"],
+		["Small reads, big brains.", "Leonardo Nah Vinci"],
+		["Be curious, not clueless.", "Mehrie Curie-ous"],
+		["Readers gonna rule.", "Barak No-drama"],
+		["Tap to evolve.", "Charles Dar-win-sometimes"],
+		["Feed the brain, not the algorithm.", "Stephen NotKing"],
+		["Why not read?", "William NOPESpeare"],
+		["You clicked. Good choice for mankind!", "Neil Thumb-strong"],
+		["Scroll less, learn more.", "Steve No-mo Jobs"],
+		["Reading is my cardio.", "Taylor Sniffed"],
+		["Get lit. Read lit.", "Issac Lit-ton"],
+		["Hallucinating... but with confidence.", "Mark Zukerbored"],
+		["AI: Because guessing is science now.", "Bill Windows"],
+		["Don't measure me, bro.", "Schrodinger"],
+		["Make AI Great Again!", "Donald Trump"],
+	];
 
-let messages = [
-	"Quick read. Long impact. 🚀",
-	"You’re just 2 mins away from a new idea 💡",
-	"Most things aren't worth your time. This might be. 🧠",
-	"Fuel for your next big thought 🧠",
-	"Brains like this stuff 🧩",
-	"Snack-sized insight 🍪",
-	"A smart scroll 📖",
-	"This one's worth it 🔥",
-	"Small read. Big spark ⚡",
-	"Scroll. Think. Repeat 🔁",
-	"Bright idea ahead 💡",
-	// 🧠 AI & Quantum-themed
-	"Trained on curiosity 🤖",
-	"Thoughts entangled. Insights collapsed. 🌀",
-	"Your daily dose of intelligence — artificial and real 🧬",
-	"Quantum weirdness, explained simply ✨",
-	"AI doesn’t sleep. Neither should your curiosity 🌙",
-	"One qubit at a time ⚛️",
-	"Smarter than GPT? Find out 🧠",
-	"Superpositions and suggestions ahead 🧿",
-	"This article passed the Turing Test ✅",
-];
 	let currentMessageIndex = 0;
 	let loadingDuration = 0;
 
 	function showNextMessage() {
-		const el = document.getElementById("loading-message");
-		currentMessageIndex = Math.floor(Math.random() * messages.length);
-		const msg = messages[currentMessageIndex];
-		el.textContent = msg;
+		const messageEl = document.getElementById("loading-quote");
+		const authorEl = document.getElementById("loading-author");
 
-		const displayTime = 1000 + msg.length * 20;
+		const [quote, author] =
+			messages[Math.floor(Math.random() * messages.length)];
+		messageEl.textContent = `“${quote}”`;
+		authorEl.textContent = `– ${author}`;
+
+		const displayTime = 1000 + quote.length * 60;
 		loadingDuration += displayTime;
 
 		if (loadingDuration < 3000) {
@@ -65,32 +65,8 @@ let messages = [
 		}
 	}
 
-	function manageReaderCount() {
-	const postId = window.__POST_ID__;
-	if (!postId) return;
-
-	const KEY = `readers-count-${postId}`;
-	const TTL_KEY = `readers-count-ttl-${postId}`;
-	const TTL_MS = 1000 * 60 * 4; // 4 minutes change read count
-	const now = Date.now();
-
-	let saved = localStorage.getItem(KEY);
-	let ttl = localStorage.getItem(TTL_KEY);
-
-	if (saved && ttl && now < parseInt(ttl)) {
-		document.getElementById("readers-count").textContent = saved;
-	} else {
-		const newCount = Math.floor(Math.random() * 3) + 2;
-		localStorage.setItem(KEY, newCount);
-		localStorage.setItem(TTL_KEY, now + TTL_MS);
-		document.getElementById("readers-count").textContent = newCount;
-	}
-}
-
 	window.addEventListener("DOMContentLoaded", () => {
 		showNextMessage();
-		manageReaderCount();
-
 		// Make sure the screen stays for at least 3.5s
 		setTimeout(() => {
 			document.getElementById("loading-screen").classList.add("fade-out");
@@ -100,57 +76,57 @@ let messages = [
 			document.getElementById("loading-screen").style.display = "none";
 		}, 4200);
 	});
-	
 </script>
 
 <style>
+	html,
+	body {
+		overflow: hidden; /* Prevent pinch-out revealing background */
+		touch-action: none; /* Optional: disable pinch zoom */
+	}
 
-#loading-screen {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  /* background: rgba(235, 227, 233, 0.3); */
-  /* color: white; */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  font-family: sans-serif;
-  font-size: 1.2rem;
-  z-index: 9999;
-  backdrop-filter: blur(30px); /* stronger blur */
-  opacity: 1;
-  transition: opacity 0.5s ease-in-out;
-}
-
+	#loading-screen {
+		position: fixed;
+		inset: 0;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		backdrop-filter: blur(30px);
+		-webkit-backdrop-filter: blur(30px);
+		z-index: 9999;
+		transition: opacity 0.5s ease-in-out;
+		opacity: 1;
+		padding: 1rem;
+	}
 
 	#loading-screen.fade-out {
 		opacity: 0;
 		pointer-events: none;
 	}
-
-	#entering-mode {
-		margin-top: 2rem;
-		/* font-size: 1rem; */
-		/* color: #dddddd; */
-	}
 </style>
 
 <!-- Loading overlay -->
 <div id="loading-screen">
-  <div id="loading-message" class="text-medium font-medium text-center flex items-center justify-center dark:text-gray-100">
-    Entering read mode 🤓
-  </div>
-  <!-- <div class="text-transparent bg-clip-text bg-gradient-to-r from-accent-one to-accent-two font-medium text-center">
+	<div id="loading-message">
+		<div
+			id="loading-quote"
+			class="italic text-center text-lg dark:text-gray-100 max-w-md mx-auto px-4"
+		>
+			Entering read mode 🤓
+		</div>
+		<div
+			id="loading-author"
+			class="mt-2 text-sm text-center dark:text-gray-300"
+		>
+		</div>
+	</div>
+</div>
+<!-- <div class="text-transparent bg-clip-text bg-gradient-to-r from-accent-one to-accent-two font-medium text-center">
     
   </div> -->
-</div>
 
 <!-- Page layout -->
 <PostLayout post={post} data-post-id={post.id}>
-	<div class="mb-4 text-sm text-center text-gray-500 italic">
-		👀 <span id="readers-count">{fallbackReadersCount}</span> people are reading this right now
-	</div>
-
 	<Content />
 </PostLayout>
