@@ -47,8 +47,7 @@ const fallbackReadersCount = Math.floor(Math.random() * 11) + 2;
 
 	let currentMessageIndex = 0;
 	let loadingDuration = 0;
-
-	function showNextMessage() {
+	function showNextMessage(endTime) {
 		const messageEl = document.getElementById("loading-quote");
 		const authorEl = document.getElementById("loading-author");
 
@@ -57,32 +56,36 @@ const fallbackReadersCount = Math.floor(Math.random() * 11) + 2;
 		messageEl.textContent = `“${quote}”`;
 		authorEl.textContent = `– ${author}`;
 
+		const now = Date.now();
 		const displayTime = 1000 + quote.length * 60;
-		loadingDuration += displayTime;
 
-		if (loadingDuration < 3000) {
-			setTimeout(showNextMessage, displayTime);
+		// If time left > displayTime, show another one
+		if (now + displayTime < endTime) {
+			setTimeout(() => showNextMessage(endTime), displayTime);
 		}
 	}
 
 	window.addEventListener("DOMContentLoaded", () => {
-		showNextMessage();
-		// Make sure the screen stays for at least 3.5s
+		document.documentElement.classList.add("loading");
+
+		const endTime = Date.now() + 3500;
+		showNextMessage(endTime);
+
 		setTimeout(() => {
 			document.getElementById("loading-screen").classList.add("fade-out");
-		}, 3500);
+		}, 4000);
 
 		setTimeout(() => {
 			document.getElementById("loading-screen").style.display = "none";
+			document.documentElement.classList.remove("loading");
 		}, 4200);
 	});
 </script>
 
 <style>
-	html,
-	body {
-		overflow: hidden; /* Prevent pinch-out revealing background */
-		touch-action: none; /* Optional: disable pinch zoom */
+	html.loading {
+		overflow: hidden;
+		touch-action: none;
 	}
 
 	#loading-screen {
@@ -108,12 +111,20 @@ const fallbackReadersCount = Math.floor(Math.random() * 11) + 2;
 
 <!-- Loading overlay -->
 <div id="loading-screen">
+	<!-- Fixed heading (never disappears) -->
+	<div
+		class="text-center text-sm font-medium mb-4 dark:text-gray-300"
+		id="read-mode-heading"
+	>
+		Entering read mode 🤓
+	</div>
+
+	<!-- Quotes section -->
 	<div id="loading-message">
 		<div
 			id="loading-quote"
 			class="italic text-center text-lg dark:text-gray-100 max-w-md mx-auto px-4"
 		>
-			Entering read mode 🤓
 		</div>
 		<div
 			id="loading-author"
