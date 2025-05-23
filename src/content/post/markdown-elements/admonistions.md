@@ -114,3 +114,14 @@ Outputs:
 :::note[My custom title]
 This is a note with a custom title.
 :::
+
+<div class="flex items-start gap-3 rounded-lg p-4 border-l-4 border-pink-500 bg-pink-50 dark:bg-pink-900/20 text-sm shadow-sm my-4">
+  <img src="/icons/llama.png" alt="Llama Icon" class="w-8 h-8 mt-1" />
+  <div class="flex-1">
+    <p class="font-semibold text-pink-700 dark:text-pink-300 mt-1">Ask That Llama!</p>
+    <p class="text-pink-800 dark:text-pink-200">
+      Ask your favorite LLM to re-explain the concept above in simpler terms — or try:<br />
+      <em>"Explain markdown admonitions in the style of Yoda."</em>
+    </p>
+  </div>
+</div>
