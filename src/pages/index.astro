@@ -121,7 +121,7 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
 					Trending Today
 				</h2>
 				<p class="text-sm text-textColor/60 mt-1">
-					Stop scrolling mindlessly. These are the only curated tweets you need to see today.
+					Stop scrolling mindlessly. These curated X posts are all you need, to stay up-to-date for today!
 				</p>
 			</div>
 			<div class="space-y-6">
@@ -234,44 +234,45 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
   }
 
   function blastRobots() {
-  const robotCount = 100;
+    const robotCount = 100;
 
-  for (let i = 0; i < robotCount; i++) {
-    const robot = document.createElement('div');
-    robot.textContent = '🤖';
-    robot.style.position = 'fixed';
-    robot.style.left = `${Math.random() * 100}vw`;
-    robot.style.top = `-50px`; // Start slightly above viewport for smooth entry
-    robot.style.fontSize = `${Math.random() * 24 + 24}px`;
-    robot.style.zIndex = 9999;
+    for (let i = 0; i < robotCount; i++) {
+      const robot = document.createElement('div');
+      robot.textContent = '🤖';
+      robot.style.position = 'fixed';
+      robot.style.left = `${Math.random() * 100}vw`;
+      robot.style.top = `-50px`; // Start slightly above viewport for smooth entry
+      robot.style.fontSize = `${Math.random() * 24 + 24}px`;
+      robot.style.zIndex = 9999;
 
     // Random delay before starting animation (0 to 4 seconds)
     const delay = Math.random() * 4000;
     const duration = 2 + Math.random() * 2; // 4-6 seconds fall time
 
-    // Apply animation with delay
-    robot.style.animation = `fall ${duration}s ease-out forwards`;
-    robot.style.animationDelay = `${delay}ms`;
+      // Apply animation with delay
+      robot.style.animation = `fall ${duration}s ease-out forwards`;
+      robot.style.animationDelay = `${delay}ms`;
 
-    document.body.appendChild(robot);
+      document.body.appendChild(robot);
 
-    // Remove robot after its animation finishes (delay + duration)
-    setTimeout(() => robot.remove(), delay + duration * 1000);
+      // Remove robot after its animation finishes (delay + duration)
+      setTimeout(() => robot.remove(), delay + duration * 1000);
+    }
+
+    if (window.navigator.vibrate) {
+      window.navigator.vibrate(300);
+    }
   }
 
-  if (window.navigator.vibrate) {
-    window.navigator.vibrate(300);
+  const style = document.createElement('style');
+  style.innerHTML = `
+  @keyframes fall {
+    from { transform: translateY(0) rotate(0deg); opacity: 1; }
+    to { transform: translateY(110vh) rotate(360deg); opacity: 0; }
   }
-}
+  `;
+  document.head.appendChild(style);
 
-	const style = document.createElement('style');
-	style.innerHTML = `
-	@keyframes fall {
-		from { transform: translateY(0) rotate(0deg); opacity: 1; }
-		to { transform: translateY(110vh) rotate(360deg); opacity: 0; }
-	}
-	`;
-	document.head.appendChild(style);
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -298,9 +299,8 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
         statusMsg.classList.replace("text-red-600", "text-green-600");
         emailInput.value = "";
         // 🎊 Trigger Confetti
-		launchConfetti();
-		blastRobots();
-
+        launchConfetti();
+        blastRobots();
       } else {
         statusMsg.textContent = "⚠️ Error: " + text;
         statusMsg.classList.remove("hidden");
