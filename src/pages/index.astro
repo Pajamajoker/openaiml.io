@@ -4,7 +4,10 @@ import { type CollectionEntry, getCollection } from "astro:content";
 import MadeWithLove from "@/components/MadeWithLove.astro"
 import PostPreview from "@/components/blog/PostPreview.astro";
 import Note from "@/components/note/Note.astro";
+import TweetEmbed from "@/components/TweetEmbed.astro";
 import { getAllPosts } from "@/data/post";
+import { trendingTweetIds } from "@/data/trendingTweets";
+import { fetchTweetData } from "@/utils/twitter";
 import PageLayout from "@/layouts/Base.astro";
 import { collectionDateSort } from "@/utils/date";
 
@@ -14,6 +17,19 @@ const allPosts = await getAllPosts();
 const allPostsByDate = allPosts
 	.sort(collectionDateSort)
 	.slice(0, MAX_POSTS) as CollectionEntry<"post">[];
+
+// Fetch trending tweets
+const trendingTweets = await Promise.all(
+	trendingTweetIds.map(id => {
+		// Extract username from the tweet ID if available
+		const username = id.includes('/') ? id.split('/')[0] : undefined;
+		const tweetId = id.includes('/') ? id.split('/')[1] : id;
+		return fetchTweetData(tweetId, username);
+	})
+);
+
+// Filter out any null tweets
+const validTweets = trendingTweets.filter((tweet): tweet is Tweet => tweet !== null);
 
 // Notes
 const MAX_NOTES = 2;
@@ -41,7 +57,7 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
 			</br>
 			<!-- </p>
 			<p class="mt-4 mb-4 text-sm font-small"> -->
-				I focus on real, usable tools, solid research / white papers, build intuition around the math, and show what’s actually useful in production.
+				I focus on real, usable tools, solid research / white papers, build intuition around the math, and show what's actually useful in production.
 			</p>
 			
 			<p class="mt-2 text-xs text-center max-w-sm mx-auto">
@@ -76,7 +92,7 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
 				<p id="status-msg" class="mt-2 text-sm text-green-600 hidden">Subscribed successfully!</p>
 			</div>
 			<p class="mt-2 text-xs text-center max-w-sm mx-auto">
-				No spam. No “basic” stuff. Just high-quality, "Open" content worth learning from, posted twice a week.  
+				No spam. No "basic" stuff. Just high-quality, "Open" content worth learning from, posted twice a week.  
 				Subscribe if you're into AI, ML, or Quantum Computing.
 			</p>
 			
@@ -96,6 +112,26 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
 			</div>
 		</div>
 	</section>
+
+	<!-- Trending This Week Section -->
+	{validTweets.length > 0 && (
+		<section aria-label="Trending Today" class="mt-12 px-4 sm:px-0">
+			<div class="mb-6">
+				<h2 class="title text-xl text-accent-two">
+					Trending Today
+				</h2>
+				<p class="text-sm text-textColor/60 mt-1">
+					Stop scrolling mindlessly. These are the only curated tweets you need to see today.
+				</p>
+			</div>
+			<div class="space-y-6">
+				{validTweets.map((tweet) => (
+					<TweetEmbed {...tweet} />
+				))}
+			</div>
+		</section>
+	)}
+
 	<!-- Posts Section -->
 	<section aria-label="Blog post list" class="mt-12 px-4 sm:px-0">
 		<h2 class="title mb-6 text-xl text-accent-two">
