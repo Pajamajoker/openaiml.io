@@ -116,7 +116,7 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
 	<!-- Trending This Week Section -->
 	{validTweets.length > 0 && (
 		<section aria-label="Trending Today" class="mt-12 px-4 sm:px-0">
-			<div class="mb-6">
+			<div class="mb-6 text-center sm:text-left">
 				<h2 class="title text-xl text-accent-two">
 					Trending Today
 				</h2>
@@ -124,9 +124,11 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
 					Stop scrolling mindlessly. These curated X posts are all you need, to stay up-to-date for today!
 				</p>
 			</div>
-			<div class="space-y-6">
+			<div class="space-y-6 max-w-2xl mx-auto">
 				{validTweets.map((tweet) => (
-					<TweetEmbed {...tweet} />
+					<div>
+						<TweetEmbed {...tweet} />
+					</div>
 				))}
 			</div>
 		</section>
