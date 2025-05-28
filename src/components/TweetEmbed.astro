@@ -19,7 +19,7 @@ const hasAuthorImage = authorImage && authorImage.length > 0;
 const tweetUrl = `https://twitter.com/${authorHandle}/status/${tweetId}`;
 ---
 
-<article class="bg-bgColor/50 backdrop-blur-sm rounded-xl p-4 border border-accent-one/10 hover:border-accent-one/20 transition-all">
+<article class="bg-bgColor/50 backdrop-blur-sm rounded-xl p-4 border border-accent-one/10 hover:border-accent-one/20 transition-all w-full overflow-hidden">
   <div class="flex flex-col sm:flex-row sm:items-start gap-3">
     <!-- Author Image -->
     {hasAuthorImage ? (
@@ -37,24 +37,24 @@ const tweetUrl = `https://twitter.com/${authorHandle}/status/${tweetId}`;
     )}
     
     <!-- Tweet Content -->
-    <div class="flex-1 min-w-0">
+    <div class="flex-1 min-w-0 w-full">
       <!-- Author Info -->
       <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-        <span class="font-semibold text-textColor truncate">{author}</span>
-        <span class="text-textColor/60 truncate">@{authorHandle}</span>
+        <span class="font-semibold text-textColor truncate max-w-[120px] sm:max-w-none">{author}</span>
+        <span class="text-textColor/60 truncate max-w-[100px] sm:max-w-none">@{authorHandle}</span>
         <span class="text-textColor/40">·</span>
         <span class="text-textColor/60">{timestamp}</span>
       </div>
       
       <!-- Tweet Text -->
-      <div class="mt-1 text-textColor text-center sm:text-left">
-        <p class="break-words whitespace-pre-wrap">{truncatedContent}</p>
+      <div class="mt-1 text-textColor text-center sm:text-left w-full">
+        <p class="break-words whitespace-pre-wrap overflow-hidden w-full">{truncatedContent}</p>
         {isLongTweet && (
           <a 
             href={tweetUrl}
             target="_blank"
             rel="noopener noreferrer"
-            class="text-accent-one hover:text-accent-two inline-block mt-1"
+            class="text-accent-one hover:text-accent-two inline-block mt-2"
           >
             Show more
           </a>
@@ -63,9 +63,9 @@ const tweetUrl = `https://twitter.com/${authorHandle}/status/${tweetId}`;
 
       <!-- Media Content -->
       {media && media.length > 0 && (
-        <div class="mt-3 grid gap-2" style={`grid-template-columns: repeat(${Math.min(media.length, 2)}, 1fr);`}>
+        <div class="mt-3 grid gap-2 w-full" style={`grid-template-columns: repeat(${Math.min(media.length, 2)}, 1fr);`}>
           {media.map((item) => (
-            <div class="relative aspect-video rounded-lg">
+            <div class="relative aspect-video rounded-lg overflow-hidden">
               <img 
                 src={item.url} 
                 alt="Tweet media" 
@@ -78,9 +78,9 @@ const tweetUrl = `https://twitter.com/${authorHandle}/status/${tweetId}`;
       )}
       
       <!-- Engagement Metrics -->
-      <div class="mt-3 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div class="mt-3 flex flex-col sm:flex-row items-center justify-between gap-2 w-full">
         {hasMetrics ? (
-          <div class="flex items-center gap-4 text-textColor/60">
+          <div class="flex items-center gap-4 text-textColor/60 flex-wrap justify-center sm:justify-start">
             {retweets > 0 && (
               <div class="flex items-center gap-1">
                 <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
@@ -122,6 +122,18 @@ const tweetUrl = `https://twitter.com/${authorHandle}/status/${tweetId}`;
   img {
     max-width: 100%;
     height: auto;
+  }
+  
+  /* Add responsive text sizing */
+  @media (max-width: 640px) {
+    p {
+      font-size: 0.95rem;
+      line-height: 1.4;
+      max-width: 100%;
+      overflow-x: hidden;
+      word-wrap: break-word;
+      word-break: break-word;
+    }
   }
 </style>
 
