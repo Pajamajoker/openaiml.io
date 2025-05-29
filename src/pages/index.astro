@@ -6,8 +6,6 @@ import PostPreview from "@/components/blog/PostPreview.astro";
 import Note from "@/components/note/Note.astro";
 import TweetEmbed from "@/components/TweetEmbed.astro";
 import { getAllPosts } from "@/data/post";
-import { fetchTrendingTweetIds, type Tweet } from "@/data/trendingTweets";
-import { fetchTweetData } from "@/utils/twitter";
 import PageLayout from "@/layouts/Base.astro";
 import { collectionDateSort } from "@/utils/date";
 
@@ -17,29 +15,6 @@ const allPosts = await getAllPosts();
 const allPostsByDate = allPosts
 	.sort(collectionDateSort)
 	.slice(0, MAX_POSTS) as CollectionEntry<"post">[];
-
-// Fetch trending tweets
-let validTweets: Tweet[] = [];
-try {
-	const trendingTweetIds = await fetchTrendingTweetIds();
-	
-	if (trendingTweetIds.length > 0) {
-		const trendingTweets = await Promise.all(
-			trendingTweetIds.map((id: string) => {
-				// Extract username from the tweet ID if available
-				const username = id.includes('/') ? id.split('/')[0] : undefined;
-				const tweetId = id.includes('/') ? id.split('/')[1] : id;
-				return fetchTweetData(tweetId, username);
-			})
-		);
-
-		// Filter out any null tweets
-		validTweets = trendingTweets.filter((tweet): tweet is Tweet => tweet !== null);
-	}
-} catch (error) {
-	console.error('Error fetching trending tweets:', error);
-	validTweets = [];
-}
 
 // Notes
 const MAX_NOTES = 2;
@@ -134,9 +109,16 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
 			</p>
 		</div>
 		<div id="tweets-container" class="space-y-6 max-w-2xl mx-auto">
-			<div class="flex justify-center items-center py-8">
+			<!-- Loading state -->
+			<div id="tweets-loading" class="flex justify-center items-center py-8">
 				<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-accent-two"></div>
+				<span class="ml-3 text-sm text-textColor/60">Teaching my Llama to fetch X posts... 🦙✨</span>
 			</div>
+			<!-- Error state -->
+			<div id="tweets-error" class="hidden text-center py-8 text-red-500">
+				Failed to load tweets. Please try again later.
+			</div>
+			<!-- Tweets will be inserted here -->
 		</div>
 	</section>
 
@@ -336,89 +318,62 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
     }
   }
 
-  // Add tweet fetching functionality
-  async function fetchTweets() {
-    const tweetsContainer = document.getElementById('tweets-container');
-    if (!tweetsContainer) return;
+  // Function to fetch and display tweets
+  async function fetchAndDisplayTweets() {
+    const container = document.getElementById('tweets-container');
+    const loading = document.getElementById('tweets-loading');
+    const error = document.getElementById('tweets-error');
 
-    const loader = tweetsContainer.querySelector('.loader');
-    const LOAD_TIMEOUT = 10000; // 10 seconds timeout
+    if (!container || !loading || !error) {
+      console.error('Required DOM elements not found');
+      return;
+    }
 
     try {
-      console.log('Fetching tweets...');
-      const response = await fetch('/api/trending-tweets');
-      const tweets = await response.json();
-      console.log('Received tweets:', tweets);
+      const response = await fetch('https://script.google.com/macros/s/AKfycbxWWV1ZXFxNat0ePrBFonW-KvY95RiCnoJrpc32JH3VwhfoK6adVoZ1FeF7RlKkC-4etw/exec');
+      const text = await response.text();
       
-      if (!tweets || tweets.length === 0) {
-        console.log('No tweets received');
-        tweetsContainer.innerHTML = '<p class="text-center text-textColor/60">No trending tweets available at the moment.</p>';
+      // Split the text response into an array of tweet IDs
+      const tweetIds = text.split('\n').filter(id => id.trim());
+
+      if (!tweetIds || tweetIds.length === 0) {
+        container.innerHTML = '<p class="text-center text-textColor/60">No trending tweets available at the moment.</p>';
         return;
       }
 
-      console.log('Rendering tweets...');
-      tweetsContainer.innerHTML = `
-        <div class="loader flex justify-center items-center py-8">
-          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-accent-two"></div>
-          <span class="ml-3 text-sm text-textColor/60">Teaching my Llama to fetch X posts... 🦙✨</span>
-        </div>
-        <div class="tweets-content hidden mx-auto max-w-2xl px-4 sm:px-6 lg:px-8">
-          ${tweets.map((tweet: { tweetId: string; authorHandle?: string }) => `
-            <div class="tweet-container mb-6 flex justify-center">
-              <blockquote class="twitter-tweet" data-dnt="true" data-theme="dark">
-                <a href="https://twitter.com/${tweet.authorHandle || 'i'}/status/${tweet.tweetId}"></a>
-              </blockquote>
-            </div>
-          `).join('')}
-        </div>
-      `;
+      // Clear loading state
+      loading.classList.add('hidden');
 
-      // Initialize tweet embeds
-      if (window.twttr) {
-        console.log('Loading Twitter widgets...');
+      // Create tweet elements
+      const tweetsContent = document.createElement('div');
+      tweetsContent.className = 'tweets-content space-y-6';
+      
+      tweetIds.forEach((tweetId: string) => {
+        const username = tweetId.includes('/') ? tweetId.split('/')[0] : 'i';
+        const id = tweetId.includes('/') ? tweetId.split('/')[1] : tweetId;
         
-        // Set a timeout to prevent infinite loading
-        const timeoutId = setTimeout(() => {
-          const loader = tweetsContainer.querySelector('.loader');
-          const tweetsContent = tweetsContainer.querySelector('.tweets-content');
-          if (loader && tweetsContent) {
-            loader.remove();
-            tweetsContent.classList.remove('hidden');
-          }
-        }, LOAD_TIMEOUT);
+        const tweetElement = document.createElement('div');
+        tweetElement.className = 'tweet-container flex justify-center';
+        tweetElement.innerHTML = `
+          <blockquote class="twitter-tweet" data-dnt="true" data-theme="dark">
+            <a href="https://twitter.com/${username}/status/${id}"></a>
+          </blockquote>
+        `;
+        tweetsContent.appendChild(tweetElement);
+      });
 
-        // Load Twitter widgets
-        window.twttr.widgets.load().then(() => {
-          console.log('Twitter widgets loaded successfully');
-          clearTimeout(timeoutId);
-          const loader = tweetsContainer.querySelector('.loader');
-          const tweetsContent = tweetsContainer.querySelector('.tweets-content');
-          if (loader && tweetsContent) {
-            loader.remove();
-            tweetsContent.classList.remove('hidden');
-          }
-        }).catch((error: Error) => {
-          console.error('Error loading Twitter widgets:', error);
-          clearTimeout(timeoutId);
-          const loader = tweetsContainer.querySelector('.loader');
-          const tweetsContent = tweetsContainer.querySelector('.tweets-content');
-          if (loader && tweetsContent) {
-            loader.remove();
-            tweetsContent.classList.remove('hidden');
-          }
-        });
-      } else {
-        console.error('Twitter widget not loaded');
-        const loader = tweetsContainer.querySelector('.loader');
-        const tweetsContent = tweetsContainer.querySelector('.tweets-content');
-        if (loader && tweetsContent) {
-          loader.remove();
-          tweetsContent.classList.remove('hidden');
-        }
+      // Clear container and add new content
+      container.innerHTML = '';
+      container.appendChild(tweetsContent);
+
+      // Load Twitter widgets
+      if (window.twttr) {
+        window.twttr.widgets.load();
       }
-    } catch (error) {
-      console.error('Error fetching tweets:', error);
-      tweetsContainer.innerHTML = '<p class="text-center text-red-500">Failed to load tweets. Please try again later.</p>';
+    } catch (err) {
+      console.error('Error fetching tweets:', err);
+      loading.classList.add('hidden');
+      error.classList.remove('hidden');
     }
   }
 
@@ -428,7 +383,7 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
   script.async = true;
   script.onload = () => {
     console.log('Twitter widget script loaded');
-    fetchTweets();
+    fetchAndDisplayTweets();
   };
   script.onerror = (error) => {
     console.error('Error loading Twitter widget script:', error);
