@@ -4,12 +4,12 @@ description: "This post provides a detailed demonstration of how to use the Mark
 publishDate: "25 Aug 2024"
 seriesId: "markdown-elements"
 orderInSeries: 2
-tags: ["markdown", "admonitions"]
+tags: ["markdown", "admonitions", "Production-Ready 🚀", "Hyped 🤡", "WIP ⚙️", "Game-Changer 🔥", "Experimental 🧪"]
 ---
 
 ## What are admonitions
 
-Admonitions (also known as “asides”) are useful for providing supportive and/or supplementary information related to your content.
+Admonitions (also known as "asides") are useful for providing supportive and/or supplementary information related to your content.
 
 ## How to use them
 
@@ -115,13 +115,15 @@ Outputs:
 This is a note with a custom title.
 :::
 
-<div class="flex items-start gap-3 rounded-lg p-4 border-l-4 border-pink-500 bg-pink-50 dark:bg-pink-900/20 text-sm shadow-sm my-4">
-  <img src="/icons/llama.png" alt="Llama Icon" class="w-8 h-8 mt-1" />
-  <div class="flex-1">
-    <p class="font-semibold text-pink-700 dark:text-pink-300 mt-1">Ask That Llama!</p>
-    <p class="text-pink-800 dark:text-pink-200">
-      Ask your favorite LLM to re-explain the concept above in simpler terms — or try:<br />
-      <em>"Explain markdown admonitions in the style of Yoda."</em>
-    </p>
+<div class="my-4 p-4 border-s-[0.625rem] rounded-lg border-pink-500 bg-pink-50 dark:bg-pink-900/20 shadow-sm">
+  <div class="flex items-start gap-3">
+    <img src="/icons/llama.png" alt="Llama Icon" class="w-8 h-8 mt-1" />
+    <div class="flex-1">
+      <p class="font-bold text-base text-pink-700 dark:text-pink-300 mb-2">Ask That Llama!</p>
+      <p class="text-pink-800 dark:text-pink-200">
+        Ask your favorite LLM to re-explain the concept above in simpler terms — or try:<br />
+        <em>"Explain markdown admonitions in the style of Yoda."</em>
+      </p>
+    </div>
   </div>
 </div>
