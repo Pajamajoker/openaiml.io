@@ -77,7 +77,7 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
 				<p id="status-msg" class="mt-2 text-sm text-green-600 hidden">Subscribed successfully!</p>
 			</div>
 			<p class="mt-2 text-xs text-center max-w-sm mx-auto">
-				No spam. No "basic" stuff. Just high-quality, "Open" content worth learning from, posted twice a week.  
+				No spam. No "basic" stuff. Just high-quality, "Open" content worth learning from.
 				Subscribe if you're into AI, ML, or Quantum Computing.
 			</p>
 			
@@ -104,7 +104,7 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
 			<h2 class="title text-xl text-accent-two">
 				Trending Today
 			</h2>
-			<p class="text-sm text-textColor/60 mt-1">
+			<p class="text-medium text-textColor/60 mt-1">
 				Stop scrolling mindlessly. These curated X posts are all you need, to stay up-to-date for today!
 			</p>
 		</div>
@@ -259,6 +259,16 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
   @keyframes fall {
     from { transform: translateY(0) rotate(0deg); opacity: 1; }
     to { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+  }
+
+  /* Fix for tweet embed white corners */
+  .tweet-container {
+    background-color: var(--bgColor);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .tweet-container iframe {
+    border-radius: 12px !important;
   }
   `;
   document.head.appendChild(style);
