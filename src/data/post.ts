@@ -46,3 +46,13 @@ export function getUniqueTagsWithCount(posts: CollectionEntry<"post">[]): [strin
 		),
 	].sort((a, b) => b[1] - a[1]);
 }
+
+/** Converts a tag with emoji to a URL-safe version while preserving the display version */
+export function getTagUrlSafe(tag: string): string {
+	// Remove emojis and special characters, convert to lowercase
+	return tag.replace(/[\u{1F300}-\u{1F9FF}]/gu, '') // Remove emojis
+			 .replace(/[^a-zA-Z0-9-]/g, '-') // Replace special chars with hyphens
+			 .toLowerCase()
+			 .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+			 .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+}

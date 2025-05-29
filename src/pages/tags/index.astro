@@ -1,6 +1,6 @@
 ---
 import Badge from "@/components/Badge.astro";
-import { getAllPosts, getUniqueTagsWithCount } from "@/data/post";
+import { getAllPosts, getUniqueTagsWithCount, getTagUrlSafe } from "@/data/post";
 import PageLayout from "@/layouts/Base.astro";
 
 const allPosts = await getAllPosts();
@@ -42,17 +42,20 @@ const meta = {
 	-->
 	<div class="flex flex-wrap items-center gap-2">
 		{
-			allTags.map(([tag, val]) => (
-			<div class="flex items-center gap-x-2">
-				<a aria-label={`View all posts with the tag: ${tag}`} href={`/tags/${tag}`}>
-				<Badge variant="muted" title={tag}>
-					<span class="text-xs font-normal">
-						&nbsp;{val} post{val > 1 && "s"}
-					</span>
-				</Badge>
-				</a>
-			</div>
-			))
+			allTags.map(([tag, val]) => {
+				const urlSafeTag = getTagUrlSafe(tag);
+				return (
+					<div class="flex items-center gap-x-2">
+						<a aria-label={`View all posts with the tag: ${tag}`} href={`/tags/${urlSafeTag}`}>
+							<Badge variant="muted" title={tag}>
+								<span class="text-xs font-normal">
+									&nbsp;{val} post{val > 1 && "s"}
+								</span>
+							</Badge>
+						</a>
+					</div>
+				);
+			})
 		}
 	</div>
 </PageLayout>
