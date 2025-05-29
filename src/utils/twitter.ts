@@ -18,8 +18,37 @@ const CACHE_DURATION = 1000 * 60 * 60; // 1 hour in milliseconds
  * Fetches tweet data using Twitter's oEmbed API
  */
 async function fetchTweetData(tweetId: string, username?: string): Promise<Tweet | null> {
+  // If no username is provided, try to extract it from the tweet ID
   if (!username) {
     console.warn('No username provided for tweet', tweetId);
+    // Try to fetch the tweet without username first
+    try {
+      const url = `https://publish.twitter.com/oembed?url=https://twitter.com/i/status/${tweetId}&omit_script=true&dnt=true&theme=dark&hide_media=false&cards=true&widget_type=tweet`;
+      
+      const response = await fetch(url, {
+        headers: {
+          'Accept': 'application/json',
+          'User-Agent': USER_AGENT
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json() as OEmbedResponse;
+        return {
+          tweetId,
+          author: data.author_name,
+          authorHandle: data.author_name.split(' ')[0].toLowerCase(), // Best guess at handle
+          content: cleanHtmlContent(data.html),
+          timestamp: data.created_at ? formatTimestamp(new Date(data.created_at)) : 'recent',
+          likes: 0,
+          retweets: 0,
+          authorImage: '',
+          media: []
+        };
+      }
+    } catch (error) {
+      console.error(`Error fetching tweet ${tweetId} without username:`, error);
+    }
     return null;
   }
 

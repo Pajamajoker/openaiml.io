@@ -124,25 +124,21 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
 	</section>
 
 	<!-- Trending This Week Section -->
-	{validTweets.length > 0 && (
-		<section aria-label="Trending Today" class="mt-12 px-4 sm:px-0">
-			<div class="mb-6 text-center sm:text-left">
-				<h2 class="title text-xl text-accent-two">
-					Trending Today
-				</h2>
-				<p class="text-sm text-textColor/60 mt-1">
-					Stop scrolling mindlessly. These curated X posts are all you need, to stay up-to-date for today!
-				</p>
+	<section aria-label="Trending Today" class="mt-12 px-4 sm:px-0">
+		<div class="mb-6 text-center sm:text-left">
+			<h2 class="title text-xl text-accent-two">
+				Trending Today
+			</h2>
+			<p class="text-sm text-textColor/60 mt-1">
+				Stop scrolling mindlessly. These curated X posts are all you need, to stay up-to-date for today!
+			</p>
+		</div>
+		<div id="tweets-container" class="space-y-6 max-w-2xl mx-auto">
+			<div class="flex justify-center items-center py-8">
+				<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-accent-two"></div>
 			</div>
-			<div class="space-y-6 max-w-2xl mx-auto">
-				{validTweets.map((tweet) => (
-					<div>
-						<TweetEmbed {...tweet} />
-					</div>
-				))}
-			</div>
-		</section>
-	)}
+		</div>
+	</section>
 
 	<!-- Posts Section -->
 	<section aria-label="Blog post list" class="mt-12 px-4 sm:px-0">
@@ -328,5 +324,115 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
     buttonText.classList.remove('hidden');
     buttonLoader.classList.add('hidden');
   });
+
+  // Add type declarations for Twitter widget
+  declare global {
+    interface Window {
+      twttr: {
+        widgets: {
+          load: () => void;
+        };
+      };
+    }
+  }
+
+  // Add tweet fetching functionality
+  async function fetchTweets() {
+    const tweetsContainer = document.getElementById('tweets-container');
+    if (!tweetsContainer) return;
+
+    const loader = tweetsContainer.querySelector('.loader');
+    const LOAD_TIMEOUT = 10000; // 10 seconds timeout
+
+    try {
+      console.log('Fetching tweets...');
+      const response = await fetch('/api/trending-tweets');
+      const tweets = await response.json();
+      console.log('Received tweets:', tweets);
+      
+      if (!tweets || tweets.length === 0) {
+        console.log('No tweets received');
+        tweetsContainer.innerHTML = '<p class="text-center text-textColor/60">No trending tweets available at the moment.</p>';
+        return;
+      }
+
+      console.log('Rendering tweets...');
+      tweetsContainer.innerHTML = `
+        <div class="loader flex justify-center items-center py-8">
+          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-accent-two"></div>
+          <span class="ml-3 text-sm text-textColor/60">Teaching my Llama to fetch X posts... 🦙✨</span>
+        </div>
+        <div class="tweets-content hidden mx-auto max-w-2xl px-4 sm:px-6 lg:px-8">
+          ${tweets.map((tweet: { tweetId: string; authorHandle?: string }) => `
+            <div class="tweet-container mb-6 flex justify-center">
+              <blockquote class="twitter-tweet" data-dnt="true" data-theme="dark">
+                <a href="https://twitter.com/${tweet.authorHandle || 'i'}/status/${tweet.tweetId}"></a>
+              </blockquote>
+            </div>
+          `).join('')}
+        </div>
+      `;
+
+      // Initialize tweet embeds
+      if (window.twttr) {
+        console.log('Loading Twitter widgets...');
+        
+        // Set a timeout to prevent infinite loading
+        const timeoutId = setTimeout(() => {
+          const loader = tweetsContainer.querySelector('.loader');
+          const tweetsContent = tweetsContainer.querySelector('.tweets-content');
+          if (loader && tweetsContent) {
+            loader.remove();
+            tweetsContent.classList.remove('hidden');
+          }
+        }, LOAD_TIMEOUT);
+
+        // Load Twitter widgets
+        window.twttr.widgets.load().then(() => {
+          console.log('Twitter widgets loaded successfully');
+          clearTimeout(timeoutId);
+          const loader = tweetsContainer.querySelector('.loader');
+          const tweetsContent = tweetsContainer.querySelector('.tweets-content');
+          if (loader && tweetsContent) {
+            loader.remove();
+            tweetsContent.classList.remove('hidden');
+          }
+        }).catch((error: Error) => {
+          console.error('Error loading Twitter widgets:', error);
+          clearTimeout(timeoutId);
+          const loader = tweetsContainer.querySelector('.loader');
+          const tweetsContent = tweetsContainer.querySelector('.tweets-content');
+          if (loader && tweetsContent) {
+            loader.remove();
+            tweetsContent.classList.remove('hidden');
+          }
+        });
+      } else {
+        console.error('Twitter widget not loaded');
+        const loader = tweetsContainer.querySelector('.loader');
+        const tweetsContent = tweetsContainer.querySelector('.tweets-content');
+        if (loader && tweetsContent) {
+          loader.remove();
+          tweetsContent.classList.remove('hidden');
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching tweets:', error);
+      tweetsContainer.innerHTML = '<p class="text-center text-red-500">Failed to load tweets. Please try again later.</p>';
+    }
+  }
+
+  // Load Twitter widget script
+  const script = document.createElement('script');
+  script.src = 'https://platform.twitter.com/widgets.js';
+  script.async = true;
+  script.onload = () => {
+    console.log('Twitter widget script loaded');
+    fetchTweets();
+  };
+  script.onerror = (error) => {
+    console.error('Error loading Twitter widget script:', error);
+  };
+  document.head.appendChild(script);
 </script>
 
