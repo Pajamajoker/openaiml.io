@@ -298,21 +298,6 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
 
   const style = document.createElement('style');
   style.innerHTML = `
-  @keyframes fall {
-    from { transform: translateY(0) rotate(0deg); opacity: 1; }
-    to { transform: translateY(110vh) rotate(360deg); opacity: 0; }
-  }
-
-  /* Fix for tweet embed white corners */
-  .tweet-container {
-    background-color: var(--bgColor);
-    border-radius: 12px;
-    overflow: hidden;
-  }
-  .tweet-container iframe {
-    border-radius: 12px !important;
-  }
-
   @keyframes bounce-subtle {
     0%, 100% {
       transform: translateY(0);
@@ -323,6 +308,16 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
   }
   .animate-bounce-subtle {
     animation: bounce-subtle 2s infinite;
+  }
+
+  /* Fix for tweet embed white corners */
+  .tweet-container {
+    background-color: var(--bgColor);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .tweet-container iframe {
+    border-radius: 12px !important;
   }
   `;
   document.head.appendChild(style);
