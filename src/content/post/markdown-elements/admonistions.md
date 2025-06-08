@@ -115,8 +115,73 @@ Outputs:
 This is a note with a custom title.
 :::
 
-<AskThatLlama prompts={[
-  "How can I use admonitions in my markdown files?",
-  "What are the different types of admonitions available?",
-  "Can I customize the appearance of admonitions?"
-]} />
+<div class="my-4 p-4 border-s-[0.625rem] rounded-lg border-pink-500 bg-pink-50 dark:bg-pink-900/20 shadow-sm">
+  <div class="flex items-start gap-3">
+    <img src="/icons/llama.png" alt="Llama Icon" class="w-8 h-8 mt-1" />
+    <div>
+      <p class="font-bold text-base text-pink-700 dark:text-pink-300">Ask That Llama!</p>
+    </div>
+  </div>
+  <div class="mt-1">
+    <p class="text-pink-800 dark:text-pink-200 mb-4">
+      Try these prompts to explore markdown admonitions in different ways:
+    </p>
+    <div class="space-y-3">
+      <div class="flex items-center justify-between bg-white dark:bg-pink-800/30 p-3 rounded-lg">
+        <span class="text-pink-800 dark:text-pink-200">Explain markdown admonitions in the style of Yoda.</span>
+        <button onclick="copyText(this, 'Explain markdown admonitions in the style of Yoda.')" class="text-pink-600 hover:text-pink-700 dark:text-pink-300 dark:hover:text-pink-200">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
+            <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
+          </svg>
+        </button>
+      </div>
+      <div class="flex items-center justify-between bg-white dark:bg-pink-800/30 p-3 rounded-lg">
+        <span class="text-pink-800 dark:text-pink-200">Give me examples of when to use each type of admonition.</span>
+        <button onclick="copyText(this, 'Give me examples of when to use each type of admonition.')" class="text-pink-600 hover:text-pink-700 dark:text-pink-300 dark:hover:text-pink-200">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
+            <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
+          </svg>
+        </button>
+      </div>
+      <div class="flex items-center justify-between bg-white dark:bg-pink-800/30 p-3 rounded-lg">
+        <span class="text-pink-800 dark:text-pink-200">Create a story using different types of admonitions to highlight key moments.</span>
+        <button onclick="copyText(this, 'Create a story using different types of admonitions to highlight key moments.')" class="text-pink-600 hover:text-pink-700 dark:text-pink-300 dark:hover:text-pink-200">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
+            <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
+          </svg>
+        </button>
+      </div>
+      <div class="flex items-center justify-between bg-white dark:bg-pink-800/30 p-3 rounded-lg">
+        <span class="text-pink-800 dark:text-pink-200">Compare markdown admonitions to other documentation tools.</span>
+        <button onclick="copyText(this, 'Compare markdown admonitions to other documentation tools.')" class="text-pink-600 hover:text-pink-700 dark:text-pink-300 dark:hover:text-pink-200">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
+            <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function copyText(button, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    const originalIcon = button.innerHTML;
+    button.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+      </svg>
+    `;
+    button.classList.add('text-green-500');
+    
+    setTimeout(() => {
+      button.innerHTML = originalIcon;
+      button.classList.remove('text-green-500');
+    }, 2000);
+  });
+}
+</script>
