@@ -86,3 +86,9 @@ Ensure the fonts load correctly by inspecting network requests in the browser's 
 
 ## Conclusion
 Using Transfonter for font subsetting helps optimize web performance by reducing font file sizes while keeping necessary glyphs. Try it out with your fonts to enhance your website's loading speed!
+
+<AskThatLlama prompts={[
+  "How can I use admonitions in my markdown files?",
+  "What are the different types of admonitions available?",
+  "Can I customize the appearance of admonitions?"
+]} />

@@ -115,15 +115,8 @@ Outputs:
 This is a note with a custom title.
 :::
 
-<div class="my-4 p-4 border-s-[0.625rem] rounded-lg border-pink-500 bg-pink-50 dark:bg-pink-900/20 shadow-sm">
-  <div class="flex items-start gap-3">
-    <img src="/icons/llama.png" alt="Llama Icon" class="w-8 h-8 mt-1" />
-    <div class="flex-1">
-      <p class="font-bold text-base text-pink-700 dark:text-pink-300 mb-2">Ask That Llama!</p>
-      <p class="text-pink-800 dark:text-pink-200">
-        Ask your favorite LLM to re-explain the concept above in simpler terms — or try:<br />
-        <em>"Explain markdown admonitions in the style of Yoda."</em>
-      </p>
-    </div>
-  </div>
-</div>
+<AskThatLlama prompts={[
+  "How can I use admonitions in my markdown files?",
+  "What are the different types of admonitions available?",
+  "Can I customize the appearance of admonitions?"
+]} />
