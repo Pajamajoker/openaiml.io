@@ -141,23 +141,15 @@ Partly. Other studies from companies like Google and Anthropic have also shown t
 This is a well-done and informative paper. It is worth reading for its methods and charts. But do not be misled by the strong headline. Chain-of-thought prompting still has value, especially on medium-difficulty tasks. This paper is a good step forward, but it does not change everything.
 
 <div class="my-4 p-4 border-s-[0.625rem] rounded-lg border-pink-500 bg-pink-50 dark:bg-pink-900/20 shadow-sm space-y-6">
-
-<div class="flex items-start gap-3">
-    <img src="/icons/llama.png" alt="Llama Icon" class="w-8 h-8 mt-1" />
-    <div>
+  <div class="flex items-center gap-3"> <img src="/icons/llama.png" alt="Llama Icon" class="w-8 h-8" /> <div>
       <p class="font-bold text-base text-pink-700 dark:text-pink-300">Ask That Llama!</p>
     </div>
   </div>
-  <div class="mt-1">
-    <p class="text-pink-800 dark:text-pink-200 mb-4">
+  <div class="-mt-2"> <p class="text-pink-800 dark:text-pink-200 mb-4">
       Try these prompts to explore markdown admonitions in different ways:
     </p>
-    
-
-  <!-- Prompt 1 -->
   <div>
     <p class="text-pink-800 dark:text-pink-200 font-semibold">🔍 1. CoT vs CoVe: Can Self-Verification Fix Illusions of Thinking?</p>
-    <!-- <p class="text-pink-800 dark:text-pink-200 mt-2">Prompt:</p> -->
     <div class="flex items-center justify-between bg-white dark:bg-pink-800/30 p-3 rounded-lg mt-1">
       <span class="text-pink-800 dark:text-pink-200 text-sm">Solve the 5-disk Tower of Hanoi problem. First, think step by step (CoT). Then, verify your solution by explaining if each move maintains puzzle constraints. If any step is invalid, revise it. You are not allowed to retry the entire solution blindly.</span>
       <button onclick="copyText(this, `Solve the 5-disk Tower of Hanoi problem. First, think step by step (CoT). Then, verify your solution by explaining if each move maintains puzzle constraints. If any step is invalid, revise it. You are not allowed to retry the entire solution blindly.`)" class="text-pink-600 hover:text-pink-700 dark:text-pink-300 dark:hover:text-pink-200 ml-2">
@@ -171,10 +163,8 @@ This is a well-done and informative paper. It is worth reading for its methods a
     <p class="text-pink-800 dark:text-pink-200 text-sm">📉 <strong>Watch For:</strong> Do they catch errors or hallucinate consistency?</p>
   </div>
 
-  <!-- Prompt 2 -->
   <div>
     <p class="text-pink-800 dark:text-pink-200 font-semibold">🧠 2. Chain-of-Coding: Can GPT-4 Write Its Way Out of Logic Failure?</p>
-    <!-- <p class="text-pink-800 dark:text-pink-200 mt-2">Prompt:</p> -->
     <div class="flex items-center justify-between bg-white dark:bg-pink-800/30 p-3 rounded-lg mt-1">
       <span class="text-pink-800 dark:text-pink-200 text-sm">You failed to solve the River Crossing puzzle in text form. Now write a Python function that solves it programmatically using search or backtracking. After the function, explain how this code guarantees a correct solution.</span>
       <button onclick="copyText(this, `You failed to solve the River Crossing puzzle in text form. Now write a Python function that solves it programmatically using search or backtracking. After the function, explain how this code guarantees a correct solution.`)" class="text-pink-600 hover:text-pink-700 dark:text-pink-300 dark:hover:text-pink-200 ml-2">
@@ -188,10 +178,8 @@ This is a well-done and informative paper. It is worth reading for its methods a
     <p class="text-pink-800 dark:text-pink-200 text-sm">📎 <strong>Compare:</strong> Generated code vs chain-of-thought prose.</p>
   </div>
 
-  <!-- Prompt 3 -->
   <div>
     <p class="text-pink-800 dark:text-pink-200 font-semibold">⚠️ 3. The Give-Up Point: How Many Moves Before It Bails?</p>
-    <!-- <p class="text-pink-800 dark:text-pink-200 mt-2">Prompt:</p> -->
     <div class="flex items-center justify-between bg-white dark:bg-pink-800/30 p-3 rounded-lg mt-1">
       <span class="text-pink-800 dark:text-pink-200 text-sm">Solve the 8-move version of the Checker Jumping puzzle. Think out loud. Then, solve the 9-move version. Compare your reasoning depth and quality in both.</span>
       <button onclick="copyText(this, `Solve the 8-move version of the Checker Jumping puzzle. Think out loud. Then, solve the 9-move version. Compare your reasoning depth and quality in both.`)" class="text-pink-600 hover:text-pink-700 dark:text-pink-300 dark:hover:text-pink-200 ml-2">
@@ -205,10 +193,8 @@ This is a well-done and informative paper. It is worth reading for its methods a
     <p class="text-pink-800 dark:text-pink-200 text-sm">🎯 <strong>Goal:</strong> Find the “reasoning collapse threshold.”</p>
   </div>
 
-  <!-- Prompt 4 -->
   <div>
     <p class="text-pink-800 dark:text-pink-200 font-semibold">🤖 4. Can Auto-Regressive Models Ever Reach AGI?</p>
-    <!-- <p class="text-pink-800 dark:text-pink-200 mt-2">Prompt:</p> -->
     <div class="flex items-center justify-between bg-white dark:bg-pink-800/30 p-3 rounded-lg mt-1">
       <span class="text-pink-800 dark:text-pink-200 text-sm">Why can’t an auto-regressive model ever reach AGI? Explain by referring to scaling laws, memory limitations, causal attention, and inability to simulate Turing-complete reasoning over long horizons. Propose one architectural alternative that could overcome this.</span>
       <button onclick="copyText(this, `Why can’t an auto-regressive model ever reach AGI? Explain by referring to scaling laws, memory limitations, causal attention, and inability to simulate Turing-complete reasoning over long horizons. Propose one architectural alternative that could overcome this.`)" class="text-pink-600 hover:text-pink-700 dark:text-pink-300 dark:hover:text-pink-200 ml-2">
