@@ -1,7 +1,7 @@
 ---
 title: "When AI “Thinks” It Thinks: Apple breaks the CoT Illusion"
 description: "Breaking down the most trending AI paper this week!"
-publishDate: "2025-05-09"
+publishDate: "2025-06-09"
 tags: [ "Hyped 🤡", "#research-paper 🔍"]
 ---
 
