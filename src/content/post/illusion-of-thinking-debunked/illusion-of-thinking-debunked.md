@@ -128,7 +128,7 @@ This is a well-done and informative paper. It is worth reading for its methods a
     </div>
   </div>
   <div class="-mt-2"> <p class="text-pink-800 dark:text-pink-200 mb-4">
-      Try these prompts to explore markdown admonitions in different ways:
+      Try these prompts on your favorite LLM to explore more about this topic by yourself:
     </p>
   <div>
     <p class="text-pink-800 dark:text-pink-200 font-semibold">🔍 1. CoT vs CoVe: Can Self-Verification Fix Illusions of Thinking?</p>
