@@ -1,22 +1,18 @@
 ---
 title: "When AI “Thinks” It Thinks: Apple breaks the CoT Illusion"
 description: "Breaking down the most trending AI paper this week!"
-publishDate: "2025-06-09"
+publishDate: "09 June 2025"
 tags: [ "Hyped 🤡", "research-paper 🔍"]
 ---
 
 ## First things first - Why This Paper Matters
-
 Large language models often look good when they show step-by-step answers. Apple’s study, “The Illusion of Thinking” shows that many of these traces are pattern matching, not genuine reasoning. If you plan to trust an LLM for logic, code, mathematics, or planning, the paper is a useful warning.
-
 ![Fig](./meme-1.gif)
 
 ## Chain-of-Thought: Clever Hack or Real Reasoning?
-
 Chain-of-thought (CoT) prompting tells a model to write its reasoning before the answer. This method boosts scores on benchmarks such as GSM8K and MATH, so it feels like real thinking. Apple points out two problems:
 
 - Many benchmark problems or solution styles appear in the training data.
-
 - Evaluations focus only on final answers, not on the quality of the steps.
 
 Earlier work from Apple showed that adding one irrelevant sentence to a math question drops accuracy by sixty-five percent. True understanding should not fail that way.
@@ -28,7 +24,6 @@ Apple built controlled versions of four logic puzzles:
 - River Crossing
 - Blocks World
 - Checker Jumping
-
 ![Fig](./challenges.png)
 
 Each puzzle can be scaled in difficulty by changing the number of objects in the puzzle. The team asked models to solve these puzzles in two modes:
@@ -38,12 +33,10 @@ Each puzzle can be scaled in difficulty by changing the number of objects in the
 
 Compute limits and token budgets were the same for both modes.
 The team also tried an **“algorithm injection”** test: the correct algorithm was provided in the prompt to see if the model could execute it.
-
 ![Fig](./meme-3.gif)
 
 ## Three performance phases
 Across all models Apple saw the same pattern:
-
 ![Fig](./three-phases.png)
 
 - **Easy tasks:** plain LLM mode was more accurate. Extra reasoning steps in LRM mode often introduced errors.
@@ -58,19 +51,14 @@ Across all models Apple saw the same pattern:
 - **Blocks World:** Did okay with 3–4 blocks, but logic broke down beyond that. Reasoning traces turned messy and incoherent by 6 blocks.
 
 - **Checker Jumping:** Polynomial growth (n²), yet models failed at just 3 pieces, suggesting not a scale issue, but lack of robust logic.
-
 ![Fig](./meme-2.gif)
-
 ## Algorithm Injection Test
 Even when fed the correct recursive Hanoi algorithm, models failed to follow it for larger n. They couldn’t execute known logic reliably.
-
-The Final Diagnosis
-The paper outlines three regimes clearly:
+The Final Diagnosis is that the paper outlines three regimes clearly:
 
 - LLMs beat LRMs on easy tasks.
 - LRMs shine in mid complexity.
 - Both fail completely on hard ones.
-
 ![Fig](./complexity-till-fail.png)
 
 Apple’s verdict? These models don’t generalize logic. They mimic patterns well, but fail to systematically apply or follow algorithms. Even “thinking aloud” doesn’t help when things get real.
@@ -105,27 +93,21 @@ Hence Apple’s punchline: ***“We found no evidence of formal reasoning in lan
 - **Keep prompts consistent** to curb token‑level jitter.
 - **Hybrid designs** (neural + symbolic) remain safer ground.
 
-
 ## Critical Review of the paper
 
 ### 1. Does this research really matter?
-
 Yes, **to some extent**. Apple has provided clear data to support an idea many already believed: chain-of-thought prompting looks impressive but often fails when the problem gets harder. Their new puzzle dataset and the way they increased difficulty step by step are useful additions. But this is not a major breakthrough. It is a good improvement, not a game changer.
 
 ### 2. Does the methodology actually make sense?
-
 Mostly, yes. The puzzles were carefully created, and they do test reasoning. But the paper only counts fully correct solutions, which may ignore partial progress. Also, chain-of-thought models usually need more space to explain, but the researchers gave all models the same token limit. That is not completely fair.
 
 ### 3. Are the conclusions measured or melodramatic?
-
 The title “no formal reasoning” sounds very strong. But the results show that chain-of-thought models do better than plain models on medium-difficulty puzzles. That still means something. The way models use fewer tokens when the task is hard might be a smart choice, not a failure. It could simply mean the model is giving up when it is unsure, which is reasonable.
 
 ### 4. Novelty check, wasn’t this known already?
-
 Partly. Other studies from companies like Google and Anthropic have also shown that LLMs struggle with reasoning. What is new here is that Apple tested the same puzzles at different difficulty levels and gave models the correct algorithm to see if they could use it. That makes the work more organized, but it is not a big surprise if you follow the field.
 
 ### 5. Strengths and Weaknesses
-
 **Weaknesses**
 - The prompts used in the experiments are not shared, so others cannot easily repeat the study.
 - The study limits each model to 32,000 tokens but also criticizes short answers. That feels inconsistent.
