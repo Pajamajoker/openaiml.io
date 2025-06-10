@@ -2,174 +2,143 @@
 title: "When AI “Thinks” It Thinks: Apple breaks the CoT Illusion"
 description: "Breaking down the most trending AI paper this week!"
 publishDate: "2025-06-09"
-tags: [ "Hyped 🤡", "#research-paper 🔍"]
+tags: [ "Hyped 🤡", "research-paper 🔍"]
 ---
 
 ## First things first - Why This Paper Matters
 
-Large language models (LLMs) wow us when they “think step by step.” But Apple’s “The Illusion of Thinking” shows that slick reasoning traces often hide plain old pattern-matching. If you plan to trust AI with real logic—code, maths, planning—this paper is your reality check. The paper taps these LLMs on the shoulder to say, *“Nice fireworks, but where’s the payload?”*
+Large language models often look good when they show step-by-step answers. Apple’s study, “The Illusion of Thinking” shows that many of these traces are pattern matching, not genuine reasoning. If you plan to trust an LLM for logic, code, mathematics, or planning, the paper is a useful warning.
 
 ![Fig](./meme-1.gif)
 
-Apple’s team tossed GPT-4, Claude, Gemini and friends into fresh logic puzzles (Tower of Hanoi, River Crossing, Blocks World, Checker Jumping) that weren’t in their training data. Result: early overthinking, mid-range improvement—and a total face-plant on hard problems. The paper nails down exactly where and why CoT breaks.
-
 ## Chain-of-Thought: Clever Hack or Real Reasoning?
 
-We’ve all seen it: ask an AI to “think step by step” and suddenly it’s solving math like a seasoned pro. This trick, called chain-of-thought (CoT) prompting, is hyped as a breakthrough. Give the model a “scratchpad,” and it starts acing benchmarks like GSM8K and MATH. Just adding “Let’s think it through” can turn a blank-slate bot into Einstein.
+Chain-of-thought (CoT) prompting tells a model to write its reasoning before the answer. This method boosts scores on benchmarks such as GSM8K and MATH, so it feels like real thinking. Apple points out two problems:
 
-But here’s the catch: it might be more magic trick than true reasoning. Apple’s paper argues that focusing only on final answers in popular benchmarks gives a false sense of intelligence. Many problems have leaked into training sets or follow common solution patterns. As they put it, “current evaluations … suffer from data contamination” (p. 2). So models often just recall familiar patterns, not reason them out.
+- Many benchmark problems or solution styles appear in the training data.
 
-CoT produces convincing steps, sure—but is the AI actually thinking, or just parroting logic it’s seen before? Apple had tested this earlier too: insert a single irrelevant sentence into a math question, and even top models’ accuracy drops by 65% (p. 2). That shouldn’t happen if they truly understood the problem.
+- Evaluations focus only on final answers, not on the quality of the steps.
 
-Suspicious of this illusion, Apple set out to test reasoning in a new way—by designing unfamiliar, logic-heavy puzzles where pattern mimicry wouldn’t cut it. Time to see what these “thinking” AIs are really made of.
+Earlier work from Apple showed that adding one irrelevant sentence to a math question drops accuracy by sixty-five percent. True understanding should not fail that way.
+The new study therefore uses puzzles that models probably never saw during training, forcing genuine reasoning.
+## The puzzle suite
+Apple built controlled versions of four logic puzzles:
 
-## Puzzle Gauntlet, Dial‑a‑Difficulty Edition
-
-Apple’s Puzzle Gauntlet: Forcing AI to Really Think (Maybe)
-How do you test if an AI is really reasoning and not just replaying memorized patterns? Apple’s answer: throw models into puzzle worlds they’ve likely never seen, where success demands actual algorithmic thinking. No trivia, no textbook prompts—just pure logic.
-
-They used four classic brain teasers: Tower of Hanoi, River Crossing, Blocks World, and a checkerboard jumping puzzle. Quick primer:
-
-Hanoi involves moving disks between pegs under strict rules.
-
-River Crossing is about ferrying items/people without conflict.
-
-Blocks World is about rearranging stacked blocks.
-
-Checker Jumping resembles a solo version of checkers.
-
-These puzzles are simple at small sizes but scale into serious logic challenges. Crucially, they aren’t common web problems a model could memorize (no “8-disk Hanoi” answers floating around online).
+- Tower of Hanoi
+- River Crossing
+- Blocks World
+- Checker Jumping
 
 ![Fig](./challenges.png)
 
-Apple created controllable environments, where they could precisely adjust puzzle difficulty—more disks, more blocks, more pieces—while keeping the logic structure intact. This let them probe: can a model solve a 3-disk Hanoi? 5? 7? At what point does its “thinking” break?
+Each puzzle can be scaled in difficulty by changing the number of objects in the puzzle. The team asked models to solve these puzzles in two modes:
 
-And it wasn’t just about final answers. They analyzed the entire reasoning trace—step-by-step moves—to see whether the AI followed a logical plan or just guessed. As the paper puts it: “enables analysis of not only final answers but also the internal reasoning traces” (p. 2). Think of it like not just checking your code compiles, but reviewing whether it’s clean or spaghetti 🍝.
+- **LLM mode:** give only the final answer
+- **LRM mode:** think aloud with chain-of-thought
 
-To test reasoning fairly, they used two setups:
-
-LLM: Same model, but prompted to just give the final answer.
-
-LRM: Prompted to “think aloud” with chain-of-thought.
-
-Same model, different prompting. Think of it as solving in your head (LLM) vs. using a rough sheet (LRM). They ran this across GPT-4, Claude, Gemini (early version), and Apple’s in-house models.
-
-Critically, both modes used comparable compute and token budgets—so CoT couldn’t win just by writing more. If reasoning helped, it had to earn it. And just to be sure, Apple also tested a wild card: what if we give the model the actual algorithm for solving the puzzle? Could it at least execute it?
-
-That set the stage: trivial puzzles, brutal puzzles, no shortcuts. The models were officially out of their comfort zone. Would they reason… or unravel? 💥
+Compute limits and token budgets were the same for both modes.
+The team also tried an **“algorithm injection”** test: the correct algorithm was provided in the prompt to see if the model could execute it.
 
 ![Fig](./meme-3.gif)
 
-The Three Phases of AI “Thinking”
-Apple noticed a consistent 3-phase pattern as puzzle complexity increased:
-
-1. Low Complexity: Overthinking Hurts
-On simple tasks like 3-disk Hanoi, plain LLMs often beat CoT models (LRMs). Why? LRMs introduced unnecessary complexity—chasing their tail or contradicting themselves. In one case, extra reasoning steps hurt accuracy instead of helping. Think of someone solving 2 + 2 by writing a proof. As the paper puts it, “standard models surprisingly outperform LRMs” at low difficulty (p. 2).
-
-2. Medium Complexity: The CoT Sweet Spot
-On slightly harder puzzles—like 4-5 block Blocks World—LRMs finally help. They correct mid-path errors and outperform plain LLMs. “Additional thinking in LRMs demonstrates advantage” (p. 2). This is where CoT prompting actually works as intended: just past memorization, but not yet too hard.
-
-3. High Complexity: Total Collapse
-Beyond a certain point, both LLMs and LRMs fall apart. Accuracy drops to near zero; LRMs even give shorter reasoning traces as difficulty rises—a behavior Apple calls a “counterintuitive scaling limit” (p. 2). In [Fig. 4], performance nosedives for all models after crossing a threshold.
+## Three performance phases
+Across all models Apple saw the same pattern:
 
 ![Fig](./three-phases.png)
 
-What the Experiments Showed
-Tower of Hanoi: LRM completed 100 correct moves on a large instance, then failed catastrophically. Despite 2ⁿ complexity, it managed long sequences—until one mistake ruined the rest.
+- **Easy tasks:** plain LLM mode was more accurate. Extra reasoning steps in LRM mode often introduced errors.
+- **Medium tasks:** LRM mode improved results; structured thinking helped.
+- **Hard tasks:** both modes failed almost completely. Accuracy fell to near zero.
 
-River Crossing: Much simpler task—only ~7 moves—but models failed as early as move 5. The same LRM that did 100 moves in Hanoi couldn’t handle a 5-move ferry trip (p. 7).
+## What the Experiments Showed
+- **Tower of Hanoi:** LRM completed 100 correct moves on a large instance, then failed catastrophically. Despite 2ⁿ complexity, it managed long sequences, until one mistake ruined the rest.
 
-Blocks World: Did okay with 3–4 blocks, but logic broke down beyond that. Reasoning traces turned messy and incoherent by 6 blocks.
+- **River Crossing:** Much simpler task, only ~7 moves, but models failed as early as move 5. The same LRM that did 100 moves in Hanoi couldn’t handle a 5-move ferry trip (p. 7).
 
-Checker Jumping: Polynomial growth (n²), yet models failed at just 3 pieces—suggesting not a scale issue, but lack of robust logic.
+- **Blocks World:** Did okay with 3–4 blocks, but logic broke down beyond that. Reasoning traces turned messy and incoherent by 6 blocks.
+
+- **Checker Jumping:** Polynomial growth (n²), yet models failed at just 3 pieces, suggesting not a scale issue, but lack of robust logic.
 
 ![Fig](./meme-2.gif)
 
-Algorithm Injection Test: Even when fed the correct recursive Hanoi algorithm, models failed to follow it for larger n. “Performance … did not improve” (p. 7). They couldn’t execute known logic reliably.
+## Algorithm Injection Test
+Even when fed the correct recursive Hanoi algorithm, models failed to follow it for larger n. They couldn’t execute known logic reliably.
 
 The Final Diagnosis
 The paper outlines three regimes clearly:
 
-LLMs beat LRMs on easy tasks.
-
-LRMs shine in mid complexity.
-
-Both fail completely on hard ones.
+- LLMs beat LRMs on easy tasks.
+- LRMs shine in mid complexity.
+- Both fail completely on hard ones.
 
 ![Fig](./complexity-till-fail.png)
 
 Apple’s verdict? These models don’t generalize logic. They mimic patterns well, but fail to systematically apply or follow algorithms. Even “thinking aloud” doesn’t help when things get real.
 
-So yes—our best models often look like they’re reasoning… but once pushed past familiar ground, they unravel fast.
+So yes, our best models often look like they’re reasoning… but once pushed past familiar ground, they unravel fast.
 
 :::note
 Pass@k is a performance metric used in evaluating language models, particularly in code generation and agent tasks. It measures the probability that at least one of the model's top-k generated solutions is correct. In essence, it assesses the reliability of the model by determining the likelihood of finding a working solution within a limited number of attempts.
 :::
 
-## The Curious Case of Conceding Early
+## The Interesting Case of Giving Up Early
 
-When LRMs sense defeat, they actually *use fewer tokens*. ***“their reasoning effort increases with problem complexity up to a point, then declines despite having an adequate token budget”*** (p. 1). [Fig. 4] says it all.
+When LRMs sense defeat, they actually *use fewer tokens*. As the paper puts it: ***“their reasoning effort increases with problem complexity up to a point, then declines despite having an adequate token budget”***
 
 ![Fig](./giving-up.png)
 
-Could be a confidence‑based early‑exit strategy; could be sheer exhaustion. Either way, silence isn’t golden here.
+Why this result though? Could be a confidence‑based early‑exit strategy; could be sheer exhaustion. Either way, silence isn’t golden here.
 
-## Algorithms Handed on a Plate—Still Stumble
+## Algorithms Handed on a Plate, Still Fail
 
-Feeding the exact algorithm ought to help, right? Alas, no. Even spoon‑fed, LRMs ***“fail to use explicit algorithms”*** on larger instances (p. 7). Discovery isn’t the only weak spot—execution buckles too.
+Feeding the exact algorithm ought to help, right? Alas, no. Even spoon‑fed, LRMs ***“fail to use explicit algorithms”*** on larger instances (p. 7). Discovery isn’t the only weak spot, execution buckles too.
 
 ![Fig](./no-spoon-feed.png)
 
-## Pattern‑Matching in a Lab Coat
-
-Hence Apple’s punchline: ***“We found no evidence of formal reasoning in language models.”*** (p. 9). Swap object names, watch accuracy wobble—proof that pattern replicas are masquerading as logic.
+Hence Apple’s punchline: ***“We found no evidence of formal reasoning in language models.”***. 
 
 ## Practical Notes for Builders
 
-- **Profile across difficulty**—averages are misleading.
-- **Skip CoT for low‑hanging fruit**—it may sabotage simplicity.
-- **Add symbolic checks**—let deterministic code verify the AI’s homework.
+- **Profile across difficulty**, averages are misleading.
+- **Skip CoT for low‑hanging fruit**, it may sabotage simplicity.
+- **Add symbolic checks**, let deterministic code verify the AI’s homework.
 - **Keep prompts consistent** to curb token‑level jitter.
 - **Hybrid designs** (neural + symbolic) remain safer ground.
 
 
-## Critical Review — A Straight‑Talking Scientist’s Take (with a Dash of British Snark)
-
-> *"Every lab claims its latest paper will change the game. Let’s give this one a proper once‑over before we roll out the bunting."*
+## Critical Review of the paper
 
 ### 1. Does this research really matter?
 
-Yes—**moderately**. Apple has put neat numbers on a hunch many of us already had: chain‑of‑thought looks clever but cracks under pressure. The new puzzle dataset and clean scaling ladders are useful contributions. But let’s not pretend they’ve discovered penicillin; it’s a solid incremental step, not a revolution.
+Yes, **to some extent**. Apple has provided clear data to support an idea many already believed: chain-of-thought prompting looks impressive but often fails when the problem gets harder. Their new puzzle dataset and the way they increased difficulty step by step are useful additions. But this is not a major breakthrough. It is a good improvement, not a game changer.
 
 ### 2. Does the methodology actually make sense?
 
-Largely, yes. The controlled puzzles are thoughtfully designed, though they measure success as *perfect* completion. That’s a bit like marking an essay solely on spelling—accurate, but it misses nuance. And holding reasoning models to the same token budget as terse baseline models slightly stacks the deck; verbosity is literally their design.
+Mostly, yes. The puzzles were carefully created, and they do test reasoning. But the paper only counts fully correct solutions, which may ignore partial progress. Also, chain-of-thought models usually need more space to explain, but the researchers gave all models the same token limit. That is not completely fair.
 
 ### 3. Are the conclusions measured or melodramatic?
 
-A tad theatrical. The headline “no formal reasoning” is catnip for journalists, but the data show LRMs beating plain LLMs on mid‑level puzzles. That’s not nothing. The so‑called “giving‑up” effect could just be a sensible early‑exit strategy when confidence drops—hardly a sign of existential failure.
+The title “no formal reasoning” sounds very strong. But the results show that chain-of-thought models do better than plain models on medium-difficulty puzzles. That still means something. The way models use fewer tokens when the task is hard might be a smart choice, not a failure. It could simply mean the model is giving up when it is unsure, which is reasonable.
 
-### 4. Novelty check—wasn’t this known already?
+### 4. Novelty check, wasn’t this known already?
 
-To a point, yes. Earlier work from Google, Anthropic, and others has highlighted fragile reasoning. Apple’s twist is systematic complexity scaling plus the explicit‑algorithm test. Nice, but hardly the first warning bell. If you’ve been paying attention, you won’t gasp in astonishment.
+Partly. Other studies from companies like Google and Anthropic have also shown that LLMs struggle with reasoning. What is new here is that Apple tested the same puzzles at different difficulty levels and gave models the correct algorithm to see if they could use it. That makes the work more organized, but it is not a big surprise if you follow the field.
 
-### 5. Quibbles & Kudos
+### 5. Strengths and Weaknesses
 
-**Quibbles**
-- Prompts aren’t published, which muddies the replication story.
-- Capping inference at 32k tokens while criticising brevity feels contradictory.
-- Binary “all‑or‑nothing” scoring ignores partial credit—real applications often value partial solutions.
+**Weaknesses**
+- The prompts used in the experiments are not shared, so others cannot easily repeat the study.
+- The study limits each model to 32,000 tokens but also criticizes short answers. That feels inconsistent.
+- The scoring is all-or-nothing. In real-world tasks, even partial solutions are often useful.
 
-**Kudos**
-- Clear demonstration that merely spoon‑feeding an algorithm doesn’t fix things.
-- If the puzzle generator is open‑sourced, it’ll be a handy benchmark.
-- Honest discussion of negative results—no sweeping under the rug.
+**Strengths**
+- The test that gives models the correct algorithm clearly shows that just knowing the logic is not enough, they still fail.
+- If Apple shares their puzzle tool, it can be a helpful benchmark for others.
+- The paper is honest about where models perform poorly, which is rare and valuable.
 
 ### 6. Final Verdict
 
-Worth reading for the methodology and tidy visuals; just don’t let the dramatic headline convince you that LLM reasoning is dead in the water. I’d file it under **“good progress—keep calm and carry on.”**
-
-> **Bottom line:** Useful dataset, smart experiments, conclusions delivered with a touch more flourish than strictly necessary. Handy, but no need to rewrite the textbooks just yet.
+This is a well-done and informative paper. It is worth reading for its methods and charts. But do not be misled by the strong headline. Chain-of-thought prompting still has value, especially on medium-difficulty tasks. This paper is a good step forward, but it does not change everything.
 
 <div class="my-4 p-4 border-s-[0.625rem] rounded-lg border-pink-500 bg-pink-50 dark:bg-pink-900/20 shadow-sm space-y-6">
 
