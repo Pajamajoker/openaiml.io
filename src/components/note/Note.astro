@@ -21,7 +21,7 @@ const { Content } = await render(note);
 	{JSON.stringify(note.data, null, 2)}
 </pre> -->
 
-	<Tag class="flex items-center title md:sticky md:top-8 md:z-10" class:list={{ "text-base": isPreview }}>
+	<Tag class="flex items-center title" class:list={{ "text-base": isPreview }}>
 		{note.data.logo ? (
 			<img
 				src={note.data.logo}
