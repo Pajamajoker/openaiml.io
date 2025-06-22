@@ -5,6 +5,7 @@ import FormattedDate from "@/components/FormattedDate.astro";
 import { Icon } from "astro-icon/components";
 import Badge from '@/components/Badge.astro';
 import Separator from "../Separator.astro";
+import { getTagUrlSafe } from "@/data/post";
 
 interface Props {
 	content: CollectionEntry<"post">;
@@ -122,7 +123,7 @@ const postSeries = content.data.seriesId
 			<Icon aria-hidden="true" class="flex-shrink-0 inline-block h-6 w-6 text-accent-base" focusable="false" name="solar:tag-line-duotone" />	
 			<>
 				{content.data.tags.map((tag) => (
-					<a aria-label={`View all posts with the tag: ${tag}`} href={`/tags/${tag}`}>
+					<a aria-label={`View all posts with the tag: ${tag}`} href={`/tags/${getTagUrlSafe(tag)}`}>
 						<Badge variant="accent-two" title={tag} />
 					</a>
 				))}

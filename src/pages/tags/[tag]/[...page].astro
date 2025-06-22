@@ -140,26 +140,55 @@ const allTags = getUniqueTags(allPosts);
 			{selectedTags.length < 3 && (
 				<div class="mb-8">
 					<h2 class="text-lg font-medium mb-4">Filter by tags:</h2>
-					<p class="text-sm text-gray-500 mb-2">Can select up to 3 tags</p>
+					<p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Can select up to 3 tags</p>
 					<div class="flex flex-wrap gap-2">
 						{allTags.map((t: string) => {
 							const isSelected = selectedTags.includes(t);
-							const newTags = isSelected 
+							const newTags = isSelected
 								? selectedTags.filter((tag: string) => tag !== t)
 								: [...selectedTags, t];
+							const newUrl =
+								newTags.length > 0
+									? `/tags/${newTags.map((tag: string) => getTagUrlSafe(tag)).sort().join("+")}/`
+									: "/tags/";
+							return (
+								<a
+									href={newUrl}
+									class:list={[
+										"px-3 py-1 rounded-full text-sm transition-colors",
+										{
+											"bg-accent-two text-white hover:bg-accent-two/90 flex items-center gap-1":
+												isSelected,
+											"bg-accent-two/10 text-gray-500 hover:bg-accent-two/20": !isSelected,
+										},
+									]}
+								>
+									<span>#{t}</span>
+									{isSelected && <span class="text-lg leading-none">×</span>}
+								</a>
+							);
+						})}
+					</div>
+				</div>
+			)}
+
+			{selectedTags.length >= 3 && (
+				<div class="mb-8">
+					<h2 class="text-lg font-medium mb-4">Selected tags:</h2>
+					<p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Maximum 3 tags selected. Click × to remove a tag.</p>
+					<div class="flex flex-wrap gap-2">
+						{selectedTags.map((t: string) => {
+							const newTags = selectedTags.filter((tag: string) => tag !== t);
 							const newUrl = newTags.length > 0 
 								? `/tags/${newTags.map((tag: string) => getTagUrlSafe(tag)).sort().join('+')}/`
 								: '/tags/';
 							return (
 								<a
 									href={newUrl}
-									class={`px-3 py-1 rounded-full text-sm transition-colors ${
-										isSelected 
-											? 'bg-accent-two text-white' 
-											: 'bg-accent-two/10 text-gray-500 hover:bg-accent-two/20'
-									}`}
+									class="px-3 py-1 rounded-full text-sm transition-colors bg-accent-two text-white hover:bg-accent-two/90 flex items-center gap-1"
 								>
-									#{t}
+									<span>#{t}</span>
+									<span class="text-lg leading-none">×</span>
 								</a>
 							);
 						})}
