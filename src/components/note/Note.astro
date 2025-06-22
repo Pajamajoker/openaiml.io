@@ -44,11 +44,7 @@ const { Content } = await render(note);
 			)
 		}
 	</Tag>
-	<div 
-		class="flex items-end h-6 text-sm text-lighter"
-		class:list={{ "mt-4": !isPreview }}
-	>
-		
+	<div class="flex flex-col gap-y-2 text-sm text-lighter sm:flex-row sm:items-center sm:justify-between" class:list={{ "mt-4": !isPreview, "mt-2": isPreview }}>
 		<FormattedDate
 			dateTimeOptions={{
 				hour: "2-digit",
@@ -59,40 +55,75 @@ const { Content } = await render(note);
 			}}
 			date={note.data.publishDate}
 		/>
+		{isPreview && (
+			<div class="flex gap-4">
+				{note.data.github && (
+					<a
+						href={note.data.github}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="inline-flex items-center gap-1 text-accent hover:underline"
+					>
+						<Icon name="mdi:github" class="h-5 w-5" />
+						<span>GitHub</span>
+					</a>
+				)}
+				{note.data.site && (
+					<a
+						href={note.data.site}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="inline-flex items-center gap-1 text-accent hover:underline"
+					>
+						<Icon name="mdi:web" class="h-5 w-5" />
+						<span>Website</span>
+					</a>
+				)}
+			</div>
+		)}
 	</div>
-	{!isPreview && note.data.github && (
-	<a
-		href={note.data.github}
-		target="_blank"
-		rel="noopener noreferrer"
-		class="mt-2 inline-flex items-center gap-1 text-sm text-accent hover:underline"
-	>
-		<Icon name="mdi:github" class="inline h-5 w-5" />
-		<span>GitHub</span>
-	</a>
+	{!isPreview && (note.data.github || note.data.site) && (
+		<div class="mt-3 flex flex-col gap-2 sm:flex-row sm:gap-4">
+			{note.data.github && (
+				<a
+					href={note.data.github}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="inline-flex items-center gap-2 text-base font-medium text-accent transition-colors hover:text-accent-two hover:underline"
+				>
+					<Icon name="mdi:github" class="h-6 w-6" />
+					<span>GitHub</span>
+				</a>
+			)}
+			{note.data.site && (
+				<a
+					href={note.data.site}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="inline-flex items-center gap-2 text-base font-medium text-accent transition-colors hover:text-accent-two hover:underline"
+				>
+					<Icon name="mdi:web" class="h-6 w-6" />
+					<span>Website</span>
+				</a>
+			)}
+		</div>
 	)}
-
-	{!isPreview && note.data.site && (
-		<a
-			href={note.data.site}
-			target="_blank"
-			rel="noopener noreferrer"
-			class="mt-1 inline-flex items-center gap-1 text-sm text-accent hover:underline"
+	{isPreview ? (
+		<div
+			class="prose prose-citrus mt-4 max-w-none [&>p:last-of-type]:mb-0"
+			class:list={{
+				"line-clamp-4": isPreview,
+				"[&>blockquote]:line-clamp-4 [&>blockquote]:mb-0": isPreview,
+				"[&>blockquote:not(:first-of-type)]:hidden": isPreview,
+				// "[&>p]:line-clamp-4": isPreview,
+				// "[&>p:not(:first-of-type)]:hidden": isPreview,
+			}} 
 		>
-			<Icon name="mdi:web" class="inline h-5 w-5" />
-			<span>Website</span>
-		</a>
+			<Content />
+		</div>
+	) : (
+		<div class="mt-4">
+			<Content />
+		</div>
 	)}
-	<div
-		class="prose prose-citrus mt-4 max-w-none [&>p:last-of-type]:mb-0"
-		class:list={{
-			"line-clamp-4": isPreview,
-			"[&>blockquote]:line-clamp-4 [&>blockquote]:mb-0": isPreview,
-			"[&>blockquote:not(:first-of-type)]:hidden": isPreview,
-			// "[&>p]:line-clamp-4": isPreview,
-			// "[&>p:not(:first-of-type)]:hidden": isPreview,
-		}} 
-	>
-		<Content />
-	</div>
 </article>
