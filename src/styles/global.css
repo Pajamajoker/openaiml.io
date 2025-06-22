@@ -371,3 +371,20 @@
 .prose blockquote {
   font-style: normal;
 }
+
+[data-highlighted-chars] > span {
+	@apply relative;
+	&::before {
+		@apply absolute -inset-x-0.5 -inset-y-0 z-0 rounded-md content-[''] border-2;
+	}
+}
+
+.prose table {
+	display: block;
+	overflow-x: auto;
+}
+
+pre {
+	/* fix for mobile overflow */
+	@apply max-w-[90vw] sm:max-w-max;
+}

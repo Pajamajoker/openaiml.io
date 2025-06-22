@@ -46,7 +46,12 @@ const meta = {
 			<div class="absolute top-[-85%] right-[-30%] w-[85%] h-full bg-gradient-to-b from-orange-300 via-indigo-300 to-transparent rounded-full opacity-60 dark:opacity-5"></div>
 		</div>
 	</div>
-	<Note as="h1" note={note} />
+	
+	<article class="grid flex-grow grid-cols-1 break-words pt-4" data-pagefind-body>
+		<div class="prose prose-citrus max-w-none flex-grow prose-headings:font-semibold prose-headings:text-accent-base">
+			<Note as="h1" note={note} />
+		</div>
+	</article>
 </PageLayout>
 
 <script>
