@@ -24,6 +24,12 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+      
+      - name: Create .env file
+        run: |
+          echo "SUBSCRIBE_SECRET=${{ secrets.SUBSCRIBE_SECRET }}" >> .env
+          echo "SUBSCRIBE_ENDPOINT=${{ secrets.SUBSCRIBE_ENDPOINT }}" >> .env
+          echo "SUBSCRIBE_SECRET=${{ secrets.SUBSCRIBE_SECRET }}" >> .env
 
       - name: Build Astro site
         run: npm run build
