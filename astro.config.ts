@@ -142,6 +142,16 @@ export default defineConfig({
         access: "public",
         optional: true,
       }),
+      SUBSCRIBE_SECRET: envField.string({
+        context: "server",
+        access: "secret",
+        optional: false,
+      }),
+      SUBSCRIBE_ENDPOINT: envField.string({
+        context: "server",
+        access: "secret",
+        optional: false,
+      }),
     },
   },
   server: {

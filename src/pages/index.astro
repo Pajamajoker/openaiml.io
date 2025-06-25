@@ -20,6 +20,10 @@ const allPostsByDate = allPosts
 const MAX_NOTES = 2;
 const allNotes = await getCollection("note");
 const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
+
+// Environment variables for client-side use
+const subscribeSecret = import.meta.env.SUBSCRIBE_SECRET;
+const subscribeEndpoint = import.meta.env.SUBSCRIBE_ENDPOINT;
 ---
 
 <PageLayout meta={{ title: "Home" }}>
@@ -211,21 +215,127 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-<script>
-  // Add type declarations for confetti
-  declare const confetti: any;
+<script is:inline define:vars={{ subscribeSecret, subscribeEndpoint }}>
+  // Wait for confetti to be available
+  let confetti;
+  
+  // Fallback confetti implementation in case CDN fails
+  function createFallbackConfetti() {
+    return function(options = {}) {
+      const defaults = {
+        particleCount: 50,
+        spread: 360,
+        origin: { x: 0.5, y: 0.5 },
+        colors: ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff']
+      };
+      
+      const config = { ...defaults, ...options };
+      
+      for (let i = 0; i < config.particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.style.position = 'fixed';
+        particle.style.left = `${config.origin.x * 100}%`;
+        particle.style.top = `${config.origin.y * 100}%`;
+        particle.style.width = '8px';
+        particle.style.height = '8px';
+        particle.style.backgroundColor = config.colors[Math.floor(Math.random() * config.colors.length)];
+        particle.style.borderRadius = '50%';
+        particle.style.pointerEvents = 'none';
+        particle.style.zIndex = '9999';
+        
+        const angle = (Math.random() * config.spread * Math.PI) / 180;
+        const velocity = 2 + Math.random() * 3;
+        const vx = Math.cos(angle) * velocity;
+        const vy = Math.sin(angle) * velocity;
+        
+        document.body.appendChild(particle);
+        
+        let x = config.origin.x * window.innerWidth;
+        let y = config.origin.y * window.innerHeight;
+        let opacity = 1;
+        
+        function animate() {
+          x += vx;
+          y += vy;
+          vy += 0.1; // gravity
+          opacity -= 0.02;
+          
+          particle.style.left = `${x}px`;
+          particle.style.top = `${y}px`;
+          particle.style.opacity = opacity;
+          
+          if (opacity > 0 && y < window.innerHeight + 100) {
+            requestAnimationFrame(animate);
+          } else {
+            particle.remove();
+          }
+        }
+        
+        requestAnimationFrame(animate);
+      }
+    };
+  }
+  
+  function waitForConfetti() {
+    return new Promise((resolve) => {
+      if (window.confetti) {
+        confetti = window.confetti;
+        resolve();
+      } else {
+        // Check every 100ms for confetti to be available
+        const checkInterval = setInterval(() => {
+          if (window.confetti) {
+            confetti = window.confetti;
+            clearInterval(checkInterval);
+            resolve();
+          }
+        }, 100);
+        
+        // Timeout after 3 seconds and use fallback
+        setTimeout(() => {
+          clearInterval(checkInterval);
+          console.warn('Confetti library not loaded, using fallback');
+          confetti = createFallbackConfetti();
+          resolve();
+        }, 3000);
+      }
+    });
+  }
 
   const form = document.getElementById('subscribe-form');
-  const emailInput = document.getElementById('email-input') as HTMLInputElement;
+  const emailInput = document.getElementById('email-input');
   const statusMsg = document.getElementById('status-msg');
   const buttonText = document.getElementById('button-text');
   const buttonLoader = document.getElementById('button-loader');
 
   function launchConfetti() {
-    const duration = 3 * 1000; // Increased to 3 seconds
+    if (!confetti) {
+      console.warn('Confetti not available');
+      return;
+    }
+    
+    console.log('Launching confetti!');
+    
+    const duration = 4 * 1000; // Increased to 4 seconds
     const animationEnd = Date.now() + duration;
-    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
+    const defaults = { startVelocity: 40, spread: 360, ticks: 80, zIndex: 9999 };
 
+    // Initial big bursts for extra impact
+    for (let i = 0; i < 3; i++) {
+      setTimeout(() => {
+        try {
+          confetti({
+            ...defaults,
+            particleCount: 200,
+            origin: { x: Math.random(), y: Math.random() - 0.2 }
+          });
+        } catch (error) {
+          console.error('Error launching confetti:', error);
+        }
+      }, i * 200);
+    }
+
+    // Frequent smaller bursts
     const interval = setInterval(function() {
       const timeLeft = animationEnd - Date.now();
 
@@ -233,14 +343,19 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
         return clearInterval(interval);
       }
 
-      // Fixed particle count - consistent throughout animation
+      // Increased particle count and more frequent bursts
       const particleCount = 50;
-      confetti({
-        ...defaults,
-        particleCount,
-        origin: { x: Math.random(), y: Math.random() - 0.2 }
-      });
-    }, 100); // Reduced interval to 100ms for more frequent bursts
+      try {
+        confetti({
+          ...defaults,
+          particleCount,
+          origin: { x: Math.random(), y: Math.random() - 0.2 }
+        });
+      } catch (error) {
+        console.error('Error launching confetti:', error);
+        clearInterval(interval);
+      }
+    }, 50); // More frequent bursts
   }
 
   function blastRobots() {
@@ -305,8 +420,9 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
       e.preventDefault();
 
       const email = emailInput.value;
-      const secret = "your-super-secret-key";
-      const endpoint = "https://script.google.com/macros/s/AKfycbxK28bL7ModFjNsbuS7oTkje9H-89MjEPCdTlc8Pt0o7J0CrQsIQ0ZlDL0c3HDk3ZBDBg/exec";
+      // Use environment variables passed from server
+      const secret = subscribeSecret;
+      const endpoint = subscribeEndpoint;
 
       // Show loader, hide button text
       if (buttonText) buttonText.classList.add('hidden');
@@ -328,6 +444,9 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
             statusMsg.classList.replace("text-red-600", "text-green-600");
           }
           if (emailInput) emailInput.value = "";
+          
+          // Wait for confetti to be available before triggering animations
+          await waitForConfetti();
           // 🎊 Trigger Confetti
           launchConfetti();
           blastRobots();
@@ -350,17 +469,6 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
       if (buttonText) buttonText.classList.remove('hidden');
       if (buttonLoader) buttonLoader.classList.add('hidden');
     });
-  }
-
-  // Add type declarations for Twitter widget
-  declare global {
-    interface Window {
-      twttr: {
-        widgets: {
-          load: () => void;
-        };
-      };
-    }
   }
 
   // Function to fetch and display tweets
@@ -393,7 +501,7 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
       const tweetsContent = document.createElement('div');
       tweetsContent.className = 'tweets-content space-y-6';
       
-      tweetIds.forEach((tweetId: string) => {
+      tweetIds.forEach((tweetId) => {
         const username = tweetId.includes('/') ? tweetId.split('/')[0] : 'i';
         const id = tweetId.includes('/') ? tweetId.split('/')[1] : tweetId;
         
