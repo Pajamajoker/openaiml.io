@@ -136,7 +136,7 @@ A well-executed proof-of-concept that opens an exciting direction for continuous
 :::tip[Stop and Ponder]
 **Remember Apple's ["Illusion of Thinking"](/posts/illusion-of-thinking-debunked/illusion-of-thinking-debunked/)?:** their puzzles showed CoT's *brick wall* when models left familiar patterns.   
 
-**Question:** Are these two failure modes—Apple's inability to generalize beyond novel puzzles and SEAL's catastrophic forgetting—two sides of the same coin?  
+**Question:** Are these two failure modes, Apple's inability to generalize beyond novel puzzles and SEAL's catastrophic forgetting, two sides of the same coin?  
 **Answer:** They rely on distributed weight representations that aren't modular or symbolic, so pushing them beyond familiar territory or repeatedly overwriting those weights leads to dramatic breakdowns.  
 :::
 
