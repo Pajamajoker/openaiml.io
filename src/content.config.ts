@@ -35,6 +35,10 @@ const post = defineCollection({
 			seriesId: z.string().optional(), // Поле для связи с серией
       		orderInSeries: z.number().optional(), // Опционально: для сортировки в серии
 			// End
+			// Links
+			github: z.string().url().optional(), // GitHub link
+			site: z.string().url().optional(),   // Project site link
+			siteLogoTitle: z.string().optional(), // Custom title for site icon
 		}),
 });
 
