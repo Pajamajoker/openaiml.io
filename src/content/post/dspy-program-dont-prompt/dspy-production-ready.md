@@ -155,7 +155,7 @@ print("Exact‑Match:", score)
 |-----------------------|--------|
 | “DSPy pipelines now power chatbots at **JetBlue** and multi‑step RAG flows at **Databricks**.” | Official use‑cases · <https://dspy.ai/community/use-cases/> |
 | “**Replit** adopted DSPy to auto‑summarise pull‑request diffs; saved us 3 engineer‑hours/day.” | Use‑cases page |
-| “**RadiantLogic** uses DSPy for SQL generation inside their AI Data Assistant—compile artefacts fit right into their CI.” | Use‑cases page |
+| “**RadiantLogic** uses DSPy for SQL generation inside their AI Data Assistant, compile artefacts fit right into their CI.” | Use‑cases page |
 | “Compile cost is real: $50 on GPT‑4o for a 1k‑example dev‑set, but still cheaper than bespoke fine‑tuning.” | GitHub discussion #1172 (Mar 2025) |
 | “TypedPredict JSON breakage caught us twice in prod.” | GitHub issue #1001 (Feb 2025) |
 | “MIPROv2 gave us +14 EM on HotPotQA with zero manual prompt edits.” | Paper replication, arXiv:2403.12345 (Apr 2025) |
@@ -177,14 +177,14 @@ Put simply: Query2Doc brings the ingredients; DSPy writes and optimises the reci
 
 * It won’t magically create a dev‑set for you.  
 * It’s not a drop‑in replacement for gradient‑based fine‑tuning when latency budgets are in the sub‑200 ms range.  
-* It doesn’t ship cloud hosting or orchestration out of the box—bring your own infra.  
+* It doesn’t ship cloud hosting or orchestration out of the box, bring your own infra.  
 
 ---
 
-## 12   FAQs in Two Lines Each
+## 12   FAQs
 
 **Q:** Can I use DSPy with on‑prem models?  
-**A:** Yes—point `dspy.LM()` at your HuggingFace endpoint or vLLM server.
+**A:** Yes, point `dspy.LM()` at your HuggingFace endpoint or vLLM server.
 
 **Q:** Does DSPy support function calling / JSON schema?  
 **A:** Via `TypedPredict`; just be aware of strictness gaps (see issue #1001).
