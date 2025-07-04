@@ -5,14 +5,8 @@ publishDate: "04 July 2025"
 github: "https://github.com/stanfordnlp/dspy"
 site: "https://dspy.ai"
 tags: ["Production-Ready 🚀", "Tool Stack 🧰", "Game-Changer 🔥"]
----
-
-# DSPy – **Programming, _not_ Prompting, LLMs**
-
-*First published **4 July 2025**. Written in my usual plain‑spoken Indian English, with just the right tadka of tech sauce.*
 
 ---
-
 ## 1   The Problem: Prompt Spaghetti
 
 We’ve all been there: copy‑pasting f‑strings, juggling `{variables}` and praying that the model will behave. It’s like assembling IKEA furniture without the manual: lots of trial‑and‑error, extra screws, and a wobbly final product. The bigger the workflow, the messier it gets, no metrics, no version control, and definitely no easy rollbacks.
