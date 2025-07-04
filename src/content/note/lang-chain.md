@@ -9,7 +9,7 @@ tags: ["Tool Stack 🧰", "Production-Ready 🚀"]
 
 ---
 
-## 1. What is LangChain?
+**What it is**  
 LangChain is a powerful open-source Python framework that helps developers build applications with Large Language Models (LLMs) by combining prompts, tools, memory, and control logic into modular workflows.
 
 **Key features**  
