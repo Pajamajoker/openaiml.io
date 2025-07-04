@@ -7,7 +7,7 @@ github: "https://github.com/stanfordnlp/dspy"
 site: "https://dspy.ai/"
 ---
 
-## 1. What is DSPy?
+**What it is**  
 DSPy is an open-source framework from Stanford for programming, rather than prompting, language-model workflows. You define small, natural-language Python modules, and DSPy compiles them into pipelines whose prompts (and even weights) are tuned automatically
 
 **Key features**  
