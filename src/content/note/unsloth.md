@@ -1,12 +1,13 @@
 ---
 title: "Unsloth"
 description: "Fastest QLoRA Fine-tuning for LLMs"
-publishDate: "2025-06-23T18:26:00Z"
+publishDate: "2025-06-21T18:26:00Z"
 logo: "/logos/unsloth.png"
 github: "https://github.com/unslothai/unslot"
 site: "https://unsloth.ai"
 tags: ["Tool Stack 🧰", "Production-Ready 🚀"]
 
+---
 **What it is**  
 Unsloth is an open-source library designed to make QLoRA fine-tuning of LLaMA models 2x faster and memory-efficient. Ideal for running on Colab, Kaggle, or low-VRAM machines.
 
