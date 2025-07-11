@@ -12,6 +12,7 @@ import { siteConfig } from "./src/site.config";
 import remarkDirective from "remark-directive"; /* handle ::: directives as nodes */
 import { remarkAdmonitions } from "./src/plugins/remark-admonitions"; /* add admonitions */
 import { remarkReadingTime } from "./src/plugins/remark-reading-time";
+import remarkMath from "remark-math";
 
 // Rehype plugins
 import rehypeExternalLinks from "rehype-external-links";
@@ -22,6 +23,7 @@ import {
   transformerMetaHighlight,
   transformerNotationDiff,
 } from "@shikijs/transformers";
+import rehypeKatex from "rehype-katex";
 
 // https://astro.build/config
 export default defineConfig({
@@ -81,7 +83,7 @@ export default defineConfig({
   markdown: {
     syntaxHighlight: false,
 
-    remarkPlugins: [remarkReadingTime, remarkDirective, remarkAdmonitions],
+    remarkPlugins: [remarkReadingTime, remarkDirective, remarkAdmonitions, remarkMath],
     remarkRehype: {
       footnoteLabelProperties: {
         className: [""],
@@ -110,6 +112,7 @@ export default defineConfig({
         },
       ],
       rehypeUnwrapImages,
+      rehypeKatex,
     ],
   },
   // https://docs.astro.build/en/guides/prefetch/
