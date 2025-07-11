@@ -10,7 +10,9 @@ siteLogoTitle: "Paper"
 
 ## 1. TL;DR  
 
-Mercury Coder Mini (2 B) and Small (7 B) junk the left-to-right decoding loop and instead **denoise many tokens in parallel**. On one NVIDIA H100 they spit out **1 109 tok/s** and **737 tok/s** respectively around ten times quicker than GPT-4o Flash-Lite, Claude 3.5 Haiku or Codestral while matching their pass@1 on HumanEval and MBPP.  
+Mercury Coder Mini (2 B) and Small (7 B) junk the left-to-right decoding loop and instead **denoise many tokens in parallel**. On one NVIDIA H100 they spit out **1 109 tok/s** and **737 tok/s** respectively around ten times quicker than GPT-4o Flash-Lite, Claude 3.5 Haiku or Codestral while matching their pass@1 on HumanEval and MBPP.
+
+***Don't forget to checkout Ask That Llama section below!***
 
 ## 2. Why this paper matters  
 
@@ -19,7 +21,7 @@ Builders bleed most on **latency**, not model size. By turning generation into a
 ## 3. How diffusion text generation works (quick recap)  
 
 1. **Forward process**: gradually replace clean tokens with a special “noise/mask” symbol until the sequence is fully blanked.  
-2. **Reverse process**: at each timestep the Transformer sees the noisy sequence **and** a timestep embedding, then predicts the original tokens for `$all$` masked positions at once.  
+2. **Reverse process**: at each timestep the Transformer sees the noisy sequence **and** a timestep embedding, then predicts the original tokens for $all$ masked positions at once.  
 3. Repeat for roughly 20-30 steps; the sequence sharpens from gibberish to polished code.  
 
 Because we batch the whole context, the GPU stays 100% busy and the autoregressive choke-point disappears. The backbone is a plain Transformer, so RoPE, Flash-Attention, LoRA everything you already know still plugs in.  
@@ -60,19 +62,7 @@ Because we batch the whole context, the GPU stays 100% busy and the autoregressi
 | Transformer-compatible → painless LoRA, RLHF, retrieval tricks | Training recipe opaque; weights closed (for now)   |
 | Third-party latency & quality audits                     | Broader reasoning still trails GPT-4-class giants  |
 
-## 7. Community buzz (last 14 days)  
-
-* *Emergent Mind*: “Mercury redraws the speed-quality Pareto”  
-* *VentureBeat* on Gemini Diffusion: “1 000–2 000 tok/s heralds a new latency league”  
-
-## 8. Hands-on: play with Mercury today 🚀  
-
-* **Browser playground** – chat.inceptionlabs.ai (just email in)  
-* **Poe.com** – search *Mercury Coder Small*  
-* **OpenAI-style API** – https://api.inceptionlabs.ai/v1 (≈10 k free tok/day, streaming ready)  
-* **Enterprise on-prem** – private weights + SLA via sales  
-
-## 9. Why the 🧪 experimental tag?  
+## 7. Why the 🧪 experimental tag?  
 
 * **Brand-new algorithm class** best practices still forming  
 * **API in flux** sampling presets, prices and endpoints may shift  
@@ -81,63 +71,129 @@ Because we batch the whole context, the GPU stays 100% busy and the autoregressi
 
 Use it for prototypes, but keep a fallback AR model in production.
 
-## 10. Under-the-hood deep-dive (full maths & intuition)  
+***You can skip this section and scroll down if you're not into nerd math.***
+
+## 8. Under-the-hood deep dive (math and intuition; I recommend reading the paper along-side this section)
 
 :::tip[Building Intuition]  
-Picture **Tom Cruise in *Mission Impossible*** staring at a CCTV frame so blurred you can barely spot shapes. He runs a high-tech “enhance” loop: each pass removes a slice of blur across the whole image until the villain’s face snaps into razor-sharp focus. Mercury does the same for text – every pass guesses all hidden tokens at once, using new guesses as context for the next clean-up, until the sequence pops out pristine.  
+Picture **Tom Cruise in *Mission Impossible*** staring at a CCTV frame so blurred you can’t make out a face.  
+He launches an “enhance” loop: each pass removes a bit of blur **everywhere at once** and shows the new guess to the next pass, until the villain’s face snaps into perfect focus.  
+Mercury’s text denoiser works the same way: each pass refines every masked token, then hands that stronger canvas to the following pass.  
 :::
 
-### 10.1 Notation  
+### 10.1  The objects we play with  
 
-* Sequence $x_0 = (x_0^{(1)},\dots,x_0^{(L)})$  
-* Mask symbol $MASK$  
-* Timesteps $t = 1,\dots,T$ (Mercury: $T \in \{12,20,30\}$)  
-* Noise rate $\beta_t$ and retention $\alpha_t = \prod_{s=1}^{t}(1-\beta_s)$
+| Symbol | What it is | Plain-English meaning |
+|--------|------------|-----------------------|
+| $x_0$ | $(x_0^{(1)},\dots,x_0^{(L)})$ | the clean ground-truth sequence of length $L$ |
+| $\langle\text{MASK}\rangle$ | special token | plays the role of “noise” for text |
+| $z_t$ | noisy sequence at step $t$ | mixture of clean tokens and masks |
+| $T$ | total steps (12, 20 or 30) | how many refinement passes we will do |
+| $\beta_t$ | scalar in (0,1) | probability of *losing* a token at step $t$ |
+| $\alpha_t$ | $\displaystyle\prod_{s=1}^t (1-\beta_s)$ | probability a token *survives* up to step $t$ |
 
-### 10.2 Forward (noising) process  
+### 10.2  Forward process $q$: how we add noise  
+
+For each position $i$ we either keep the original token or replace it with a mask.
 
 $$
-q(z_t^{(i)} \mid x_0^{(i)}) =
+\underbrace{q\!\bigl(z_t^{(i)} \mid x_0^{(i)}\bigr)}_{\text{probability model}}
+=
 \begin{cases}
-x_0^{(i)} & \text{w.p. } \alpha_t,\\
-MASK & \text{w.p. } 1-\alpha_t.
+x_0^{(i)} & \text{with prob. } \alpha_t, \\[6pt]
+\langle\text{MASK}\rangle & \text{with prob. } 1-\alpha_t
 \end{cases}
 $$
 
+**What this says**  
+* After $t$ ticks of the corruption clock, each token is independently blanked out with probability $1-\alpha_t$.  
+* The bigger the step index, the more blank tokens you expect to see.
+
 :::tip[Building Intuition]  
-Think of your source code as a page gradually covered with sticky notes. The forward process is you slapping notes on randomly; more steps, more notes.  
+Imagine your code is printed on paper and you slap sticky notes at random.  
+Step 1: a few notes.  
+Step 10: half the page is covered.  
+Keep going and the page becomes a solid wall of sticky notes.  
 :::
 
-### 10.3 Reverse (denoising) model  
+### 10.3  Reverse model $p_\theta$: how we remove noise  
+
+A Transformer $f_\theta$ receives the current noisy sequence $z_t$ plus a learned embedding of the step index $t$.  
+It outputs a full-vocabulary logit vector for **every** position, turning into a categorical distribution
 
 $$
-\mathcal{L}(\theta)=
+p_\theta(x_0 \mid z_t, t)
+=
+\operatorname{Cat}\!\Bigl(
+x_0;\,
+\operatorname{softmax}\!\bigl(f_\theta(z_t,\,e_t)\bigr)
+\Bigr).
+$$
+
+**What this means**  
+* Given the partially masked sentence and “how fuzzy” it currently is (the timestep), the network predicts what the original clean token was at every index.  
+* All positions are predicted **in one shot**, not left-to-right.
+
+### 10.4  Training loss: make the predictions match the truth  
+
+$$
+\mathcal{L}(\theta)
+=
 \mathbb{E}_{x_0,t}
-\bigl[-\gamma(t)\log p_\theta(x_0\mid z_t,t)\bigr],\quad
-\gamma(t)\propto\beta_t(1-\alpha_t).
+\Bigl[
+-\gamma(t)\,
+\log p_\theta\!\bigl(x_0 \mid z_t, t\bigr)
+\Bigr],
+\qquad
+\gamma(t)\;\propto\;\beta_t\bigl(1-\alpha_t\bigr).
 $$
 
-:::tip[Building Intuition]  
-Early steps are trivial (few notes, easy guess); late steps are hopeless (all hidden). Mid-noise steps give the model the hardest yet most informative puzzles, so the loss weights them higher.  
-:::
+**Line-by-line explanation**  
 
-### 10.4 Sampling  
+1. Draw a clean sentence $x_0$ from the data set.  
+2. Pick a timestep $t$ uniformly (or with a schedule).  
+3. Corrupt $x_0$ into $z_t$ using the forward rule.  
+4. Ask the model to reconstruct $x_0$ from $z_t$.  
+5. Penalise the negative log-probability of every correct token, but scale it by $\gamma(t)$.  
 
-Start with full masks $z_T$; loop backward, replace masked spots with predictions until $z_0$ is fully clean.
+*Why the weight $\gamma(t)$?*  
+* Very small $t$: the task is almost trivial (hardly any masks) so we down-weight it.  
+* Very large $t$: the task is hopeless (all masks) so we also down-weight it.  
+* Middle $t$: the model learns the most, so we give these steps the highest weight.
 
-### 10.5 Why it’s faster  
+### 10.5  Sampling: turning pure noise into fluent text  
 
-Only $T$ full-sequence passes vs $L$ single-token passes. With $T=20$ and $L=512$, that’s a $25\times$ step reduction plus higher GPU utilisation.
+1. **Initial state**  
+   $z_T = (\langle\text{MASK}\rangle,\dots,\langle\text{MASK}\rangle)$.  
+2. **Loop** for $t = T,\,\dots,\,1$:  
+   1. Run $f_\theta(z_t,e_t)$ to get logits for every slot.  
+   2. Pick the arg-max (or sample) at each masked position.  
+   3. Drop those predictions into the sequence to form $z_{t-1}$.  
+3. **Return** the fully denoised sequence $z_0$.
 
-### 10.6 Self-conditioning  
+At every pass we update **all** positions, so the cost is proportional to $T$ (≈20) instead of the length $L$ (hundreds or thousands).
 
-Logits from step $t+1$ feed into step $t$, acting like a residual highway across time.
+### 10.6  Why fewer passes can still beat left-to-right  
 
-### 10.7 AR as a limit case  
+* Autoregressive decoding does one token per forward pass → $L$ passes.  
+* Diffusion does $T$ passes on the whole sequence → roughly 20 passes.  
+* Each pass is heavier, but GPUs love large matrix multiplies more than many small ones, so utilisation jumps from ~40 % to ~90 %.
 
-As $\beta_t \to 0$ and $T \to L$, diffusion degenerates to classic autoregressive decoding.
+**Net outcome on an H100**: more than ten-fold increase in tokens per second.
 
-## 11. Competitor spotlight – Mercury vs Gemini Diffusion  
+### 10.7  Self-conditioning trick  
+
+After each step we cache the logits and feed them (concatenated) back into the next step.  
+Think of it as giving the model a *sketch* of its previous guess so it can refine instead of restarting.
+
+### 10.8  Autoregression as a special case  
+
+If you let $\beta_t \to 0$ (almost no masking) and set $T = L$ (one step per position), the process reduces to standard left-to-right language modelling:  
+mask a single future slot, predict it, move on.  
+Classical autoregression is just the infinite-step, zero-noise corner of this broader diffusion family.
+
+
+## 10. Competitor spotlight – Mercury vs Gemini Diffusion  
 
 | Feature                     | **Mercury Mini** | **Gemini Diffusion** |
 |-----------------------------|------------------|----------------------|
@@ -149,7 +205,7 @@ As $\beta_t \to 0$ and $T \to L$, diffusion degenerates to classic autoregressiv
 
 ***Gemini is faster on paper, but Mercury is the diffusion LM you can call and fine-tune today.***
 
-## 12. Open-source diffusion LMs you can self-host  
+## 11. Open-source diffusion LMs you can self-host  
 
 | Model                      | Size         | What you get               | Licence    |
 |----------------------------|--------------|----------------------------|------------|
@@ -160,7 +216,7 @@ As $\beta_t \to 0$ and $T \to L$, diffusion degenerates to classic autoregressiv
 
 Speeds hover in the 100–300 tok/s band on A100 great for experimentation, slower than Mercury.
 
-## 13. So why get excited about Mercury if OSS options already exist?  
+## 12. So why get excited about Mercury if OSS options already exist?  
 
 1. **Order-of-magnitude speed jump** 1 K + tok/s dwarfs today’s OSS diffusion LMs  
 2. **Serious system engineering** kernels, KV-paging, auto-step scheduling turn theory into wall-clock wins  
@@ -168,7 +224,7 @@ Speeds hover in the 100–300 tok/s band on A100 great for experimentation, slow
 4. **Vertical focus** trained for code, supports fill-in-the-middle, already ships IDE plug-ins  
 5. **Bridge from lab to prod** SLAs, on-prem, familiar API while diffusion tooling matures
 
-## 14. Why this belongs on your watch-list  
+## 13. Why this belongs on your watch-list  
 
 Diffusion LMs just crossed from neat research to **real-world latency killers**. Mercury proves parallel denoising can outrun every mainstream AR trick, and Gemini’s numbers show Big Tech smells the same opportunity. Whether you’re building an IDE copilot, chain-of-thought agent or multimodal RAG stack, watching Mercury (and the OSS projects chasing it) could hand you a **ten-fold latency dividend** the moment open weights or bigger checkpoints drop.  
 
