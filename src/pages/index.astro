@@ -312,8 +312,8 @@ const subscribeEndpoint = import.meta.env.SUBSCRIBE_ENDPOINT;
     
     // Check if device is mobile for reduced performance
     const isMobile = window.innerWidth <= 768;
-    const particleCount = isMobile ? 40 : 120; // Slightly increased
-    const duration = isMobile ? 3500 : 4500; // Increased duration
+    const particleCount = isMobile ? 75 : 200; // Increased
+    const duration = isMobile ? 5500 : 7500; // Slightly longer
     
     console.log('Launching confetti!');
     
@@ -325,70 +325,109 @@ const subscribeEndpoint = import.meta.env.SUBSCRIBE_ENDPOINT;
       zIndex: 9999 
     };
 
-    // Single burst instead of multiple
+    // Vibrant, varied confetti colors
+    const vibrantColors = [
+      '#ff6b6b', '#feca57', '#48dbfb', '#1dd1a1', '#5f27cd', '#ff9ff3', '#f368e0', '#00d2d3', '#222f3e', '#ee5253', '#0abde3', '#10ac84', '#576574', '#c8d6e5', '#fffa65', '#f6e58d', '#ffbe76', '#e056fd', '#686de0', '#30336b', '#95afc0', '#7ed6df', '#e17055', '#fdcb6e', '#00b894', '#00cec9', '#fd79a8', '#636e72'
+    ];
+    // First burst: big, center
     try {
       confetti({
         ...defaults,
         particleCount,
+        colors: vibrantColors,
         origin: { x: 0.5, y: 0.5 }
       });
-    } catch (error) {
-      console.error('Error launching confetti:', error);
-    }
-
-    // Optional second burst after delay
+    } catch (error) {}
+    // Second burst: left
     setTimeout(() => {
       try {
         confetti({
           ...defaults,
           particleCount: Math.floor(particleCount * 0.6),
-          origin: { x: 0.3, y: 0.5 }
+          colors: vibrantColors,
+          origin: { x: 0.1, y: 0.4 }
         });
-      } catch (error) {
-        console.error('Error launching confetti:', error);
-      }
-    }, 800);
-    
-    // Third burst for more impact
+      } catch (error) {}
+    }, 400);
+    // Third burst: right
     setTimeout(() => {
       try {
         confetti({
           ...defaults,
-          particleCount: Math.floor(particleCount * 0.4),
-          origin: { x: 0.7, y: 0.5 }
+          particleCount: Math.floor(particleCount * 0.6),
+          colors: vibrantColors,
+          origin: { x: 0.9, y: 0.4 }
         });
-      } catch (error) {
-        console.error('Error launching confetti:', error);
-      }
-    }, 1500);
+      } catch (error) {}
+    }, 800);
+    // Fourth burst: bottom
+    setTimeout(() => {
+      try {
+        confetti({
+          ...defaults,
+          particleCount: Math.floor(particleCount * 0.5),
+          colors: vibrantColors,
+          origin: { x: 0.5, y: 0.9 }
+        });
+      } catch (error) {}
+    }, 1200);
+    // Fifth burst: random
+    setTimeout(() => {
+      try {
+        confetti({
+          ...defaults,
+          particleCount: Math.floor(particleCount * 0.7),
+          colors: vibrantColors,
+          origin: { x: Math.random(), y: Math.random() * 0.5 }
+        });
+      } catch (error) {}
+    }, 1700);
+    // Sixth burst: random
+    setTimeout(() => {
+      try {
+        confetti({
+          ...defaults,
+          particleCount: Math.floor(particleCount * 0.5),
+          colors: vibrantColors,
+          origin: { x: Math.random(), y: Math.random() * 0.8 }
+        });
+      } catch (error) {}
+    }, 2300);
   }
 
   // Performance-optimized robot animation
   function blastRobots() {
     const isMobile = window.innerWidth <= 768;
-    const robotCount = isMobile ? 25 : 60; // Slightly increased
+    const robotEmojis = ['🤖', '🎉', '🤩', '🥳', '🚀'];
+    const robotCount = isMobile ? 22 : 45; // Increased
     const robots = [];
 
     for (let i = 0; i < robotCount; i++) {
       const robot = document.createElement('div');
-      robot.textContent = '🤖';
+      robot.textContent = robotEmojis[Math.floor(Math.random() * robotEmojis.length)];
       robot.style.position = 'fixed';
-      robot.style.left = `${Math.random() * 100}vw`;
+      // Horizontal drift: start left or right, drift across
+      const startX = Math.random() * 100;
+      robot.style.left = `${startX}vw`;
       robot.style.top = `-50px`;
-      robot.style.fontSize = `${Math.random() * 18 + 18}px`; // Slightly larger
+      robot.style.fontSize = `${Math.random() * 28 + 28}px`; // Larger
       robot.style.zIndex = '9999';
-      robot.style.transition = 'all 3s ease-out'; // Increased duration
+      robot.style.transition = 'all 4.5s cubic-bezier(0.23, 1, 0.32, 1)';
+      // Random spin
+      const spin = Math.random() > 0.5 ? 360 : -360;
+      // Horizontal drift target
+      const drift = (Math.random() - 0.5) * 40; // -20vw to +20vw
 
       document.body.appendChild(robot);
       robots.push(robot);
 
-      // Staggered animation with longer duration
+      // Staggered animation with longer, more random delay
       setTimeout(() => {
-        robot.style.transform = `translateY(${window.innerHeight + 100}px) rotate(360deg)`;
+        robot.style.transform = `translate(${drift}vw, ${window.innerHeight + 100}px) rotate(${spin}deg)`;
         robot.style.opacity = '0';
         
-        setTimeout(() => robot.remove(), 3000); // Increased cleanup time
-      }, Math.random() * 1500); // Increased delay range
+        setTimeout(() => robot.remove(), 4500);
+      }, 500 + Math.random() * 3500);
     }
 
     // Haptic feedback only on mobile
