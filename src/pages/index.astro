@@ -213,92 +213,85 @@ const subscribeEndpoint = import.meta.env.SUBSCRIBE_ENDPOINT;
 	-->
 </PageLayout>
 
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
 <script is:inline define:vars={{ subscribeSecret, subscribeEndpoint }}>
-  // Wait for confetti to be available
-  let confetti;
+  // Performance-optimized confetti and animations
+  let confetti = null;
+  let confettiLoaded = false;
   
-  // Fallback confetti implementation in case CDN fails
-  function createFallbackConfetti() {
+  // Lightweight fallback confetti for mobile performance
+  function createLightweightConfetti() {
     return function(options = {}) {
       const defaults = {
-        particleCount: 50,
+        particleCount: 20, // Reduced from 50
         spread: 360,
         origin: { x: 0.5, y: 0.5 },
-        colors: ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff']
+        colors: ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57']
       };
       
       const config = { ...defaults, ...options };
+      const particles = [];
       
       for (let i = 0; i < config.particleCount; i++) {
         const particle = document.createElement('div');
         particle.style.position = 'fixed';
         particle.style.left = `${config.origin.x * 100}%`;
         particle.style.top = `${config.origin.y * 100}%`;
-        particle.style.width = '8px';
-        particle.style.height = '8px';
+        particle.style.width = '6px';
+        particle.style.height = '6px';
         particle.style.backgroundColor = config.colors[Math.floor(Math.random() * config.colors.length)];
         particle.style.borderRadius = '50%';
         particle.style.pointerEvents = 'none';
         particle.style.zIndex = '9999';
-        
-        const angle = (Math.random() * config.spread * Math.PI) / 180;
-        const velocity = 2 + Math.random() * 3;
-        const vx = Math.cos(angle) * velocity;
-        const vy = Math.sin(angle) * velocity;
+        particle.style.transition = 'all 0.5s ease-out';
         
         document.body.appendChild(particle);
+        particles.push(particle);
         
-        let x = config.origin.x * window.innerWidth;
-        let y = config.origin.y * window.innerHeight;
-        let opacity = 1;
-        
-        function animate() {
-          x += vx;
-          y += vy;
-          vy += 0.1; // gravity
-          opacity -= 0.02;
+        // Use CSS transforms instead of requestAnimationFrame for better performance
+        setTimeout(() => {
+          const angle = (Math.random() * config.spread * Math.PI) / 180;
+          const distance = 100 + Math.random() * 200;
+          const x = Math.cos(angle) * distance;
+          const y = Math.sin(angle) * distance;
           
-          particle.style.left = `${x}px`;
-          particle.style.top = `${y}px`;
-          particle.style.opacity = opacity;
+          particle.style.transform = `translate(${x}px, ${y}px)`;
+          particle.style.opacity = '0';
           
-          if (opacity > 0 && y < window.innerHeight + 100) {
-            requestAnimationFrame(animate);
-          } else {
-            particle.remove();
-          }
-        }
-        
-        requestAnimationFrame(animate);
+          setTimeout(() => particle.remove(), 500);
+        }, Math.random() * 100);
       }
     };
   }
   
-  function waitForConfetti() {
+  // Load confetti only when needed (lazy loading)
+  async function loadConfetti() {
+    if (confettiLoaded) return;
+    
     return new Promise((resolve) => {
+      // Check if already loaded
       if (window.confetti) {
         confetti = window.confetti;
+        confettiLoaded = true;
         resolve();
-      } else {
-        // Check every 100ms for confetti to be available
-        const checkInterval = setInterval(() => {
-          if (window.confetti) {
-            confetti = window.confetti;
-            clearInterval(checkInterval);
-            resolve();
-          }
-        }, 100);
-        
-        // Timeout after 3 seconds and use fallback
-        setTimeout(() => {
-          clearInterval(checkInterval);
-          console.warn('Confetti library not loaded, using fallback');
-          confetti = createFallbackConfetti();
-          resolve();
-        }, 3000);
+        return;
       }
+      
+      // Load confetti script dynamically
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js';
+      script.async = true;
+      script.onload = () => {
+        confetti = window.confetti;
+        confettiLoaded = true;
+        resolve();
+      };
+      script.onerror = () => {
+        console.warn('Confetti library failed to load, using lightweight fallback');
+        confetti = createLightweightConfetti();
+        confettiLoaded = true;
+        resolve();
+      };
+      document.head.appendChild(script);
     });
   }
 
@@ -308,84 +301,99 @@ const subscribeEndpoint = import.meta.env.SUBSCRIBE_ENDPOINT;
   const buttonText = document.getElementById('button-text');
   const buttonLoader = document.getElementById('button-loader');
 
-  function launchConfetti() {
+  // Performance-optimized confetti launch
+  async function launchConfetti() {
+    await loadConfetti();
+    
     if (!confetti) {
       console.warn('Confetti not available');
       return;
     }
     
+    // Check if device is mobile for reduced performance
+    const isMobile = window.innerWidth <= 768;
+    const particleCount = isMobile ? 40 : 120; // Slightly increased
+    const duration = isMobile ? 3500 : 4500; // Increased duration
+    
     console.log('Launching confetti!');
     
-    const duration = 4 * 1000; // Increased to 4 seconds
     const animationEnd = Date.now() + duration;
-    const defaults = { startVelocity: 40, spread: 360, ticks: 80, zIndex: 9999 };
+    const defaults = { 
+      startVelocity: 30, 
+      spread: 360, 
+      ticks: 60, 
+      zIndex: 9999 
+    };
 
-    // Initial big bursts for extra impact
-    for (let i = 0; i < 3; i++) {
-      setTimeout(() => {
-        try {
-          confetti({
-            ...defaults,
-            particleCount: 200,
-            origin: { x: Math.random(), y: Math.random() - 0.2 }
-          });
-        } catch (error) {
-          console.error('Error launching confetti:', error);
-        }
-      }, i * 200);
+    // Single burst instead of multiple
+    try {
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: 0.5, y: 0.5 }
+      });
+    } catch (error) {
+      console.error('Error launching confetti:', error);
     }
 
-    // Frequent smaller bursts
-    const interval = setInterval(function() {
-      const timeLeft = animationEnd - Date.now();
-
-      if (timeLeft <= 0) {
-        return clearInterval(interval);
-      }
-
-      // Increased particle count and more frequent bursts
-      const particleCount = 50;
+    // Optional second burst after delay
+    setTimeout(() => {
       try {
         confetti({
           ...defaults,
-          particleCount,
-          origin: { x: Math.random(), y: Math.random() - 0.2 }
+          particleCount: Math.floor(particleCount * 0.6),
+          origin: { x: 0.3, y: 0.5 }
         });
       } catch (error) {
         console.error('Error launching confetti:', error);
-        clearInterval(interval);
       }
-    }, 50); // More frequent bursts
+    }, 800);
+    
+    // Third burst for more impact
+    setTimeout(() => {
+      try {
+        confetti({
+          ...defaults,
+          particleCount: Math.floor(particleCount * 0.4),
+          origin: { x: 0.7, y: 0.5 }
+        });
+      } catch (error) {
+        console.error('Error launching confetti:', error);
+      }
+    }, 1500);
   }
 
+  // Performance-optimized robot animation
   function blastRobots() {
-    const robotCount = 100;
+    const isMobile = window.innerWidth <= 768;
+    const robotCount = isMobile ? 25 : 60; // Slightly increased
+    const robots = [];
 
     for (let i = 0; i < robotCount; i++) {
       const robot = document.createElement('div');
       robot.textContent = '🤖';
       robot.style.position = 'fixed';
       robot.style.left = `${Math.random() * 100}vw`;
-      robot.style.top = `-50px`; // Start slightly above viewport for smooth entry
-      robot.style.fontSize = `${Math.random() * 24 + 24}px`;
+      robot.style.top = `-50px`;
+      robot.style.fontSize = `${Math.random() * 18 + 18}px`; // Slightly larger
       robot.style.zIndex = '9999';
-
-    // Random delay before starting animation (0 to 4 seconds)
-    const delay = Math.random() * 4000;
-    const duration = 2 + Math.random() * 2; // 4-6 seconds fall time
-
-      // Apply animation with delay
-      robot.style.animation = `fall ${duration}s ease-out forwards`;
-      robot.style.animationDelay = `${delay}ms`;
+      robot.style.transition = 'all 3s ease-out'; // Increased duration
 
       document.body.appendChild(robot);
+      robots.push(robot);
 
-      // Remove robot after its animation finishes (delay + duration)
-      setTimeout(() => robot.remove(), delay + duration * 1000);
+      // Staggered animation with longer duration
+      setTimeout(() => {
+        robot.style.transform = `translateY(${window.innerHeight + 100}px) rotate(360deg)`;
+        robot.style.opacity = '0';
+        
+        setTimeout(() => robot.remove(), 3000); // Increased cleanup time
+      }, Math.random() * 1500); // Increased delay range
     }
 
-    if (window.navigator.vibrate) {
-      window.navigator.vibrate(300);
+    // Haptic feedback only on mobile
+    if (isMobile && window.navigator.vibrate) {
+      window.navigator.vibrate(200);
     }
   }
 
@@ -399,18 +407,6 @@ const subscribeEndpoint = import.meta.env.SUBSCRIBE_ENDPOINT;
   }
   .tweet-container iframe {
     border-radius: 12px !important;
-  }
-  
-  /* Robot falling animation */
-  @keyframes fall {
-    from {
-      transform: translateY(-50px) rotate(0deg);
-      opacity: 1;
-    }
-    to {
-      transform: translateY(200vh) rotate(360deg);
-      opacity: 0;
-    }
   }
   `;
   document.head.appendChild(style);
@@ -445,9 +441,7 @@ const subscribeEndpoint = import.meta.env.SUBSCRIBE_ENDPOINT;
           }
           if (emailInput) emailInput.value = "";
           
-          // Wait for confetti to be available before triggering animations
-          await waitForConfetti();
-          // 🎊 Trigger Confetti
+          // 🎊 Trigger optimized animations
           launchConfetti();
           blastRobots();
         } else {
@@ -530,17 +524,37 @@ const subscribeEndpoint = import.meta.env.SUBSCRIBE_ENDPOINT;
     }
   }
 
-  // Load Twitter widget script
-  const script = document.createElement('script');
-  script.src = 'https://platform.twitter.com/widgets.js';
-  script.async = true;
-  script.onload = () => {
-    console.log('Twitter widget script loaded');
-    fetchAndDisplayTweets();
-  };
-  script.onerror = (error) => {
-    console.error('Error loading Twitter widget script:', error);
-  };
-  document.head.appendChild(script);
+  // Lazy load Twitter widgets when section comes into view
+  function loadTwitterWidgets() {
+    const script = document.createElement('script');
+    script.src = 'https://platform.twitter.com/widgets.js';
+    script.async = true;
+    script.onload = () => {
+      console.log('Twitter widget script loaded');
+      fetchAndDisplayTweets();
+    };
+    script.onerror = (error) => {
+      console.error('Error loading Twitter widget script:', error);
+    };
+    document.head.appendChild(script);
+  }
+
+  // Use Intersection Observer to lazy load Twitter widgets
+  const tweetsSection = document.getElementById('tweets-container');
+  if (tweetsSection && 'IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          loadTwitterWidgets();
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '100px' });
+    
+    observer.observe(tweetsSection);
+  } else {
+    // Fallback for browsers without Intersection Observer
+    loadTwitterWidgets();
+  }
 </script>
 
