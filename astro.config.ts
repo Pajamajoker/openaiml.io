@@ -82,37 +82,13 @@ export default defineConfig({
   ],
   markdown: {
     syntaxHighlight: false,
-
-    remarkPlugins: [remarkReadingTime, remarkDirective, remarkAdmonitions, remarkMath],
-    remarkRehype: {
-      footnoteLabelProperties: {
-        className: [""],
-      },
-      footnoteBackContent: "⤴",
-    },
-
+    remarkPlugins: [
+      remarkMath,
+      remarkDirective,
+      remarkAdmonitions,
+    ],
     rehypePlugins: [
-      [
-        rehypeExternalLinks,
-        {
-          rel: ["nofollow", "noreferrer"],
-          target: "_blank",
-        },
-      ],
-
-      [
-        rehypePrettyCode,
-        {
-          theme: {
-            light: "rose-pine-dawn", // after changing the theme, the server needs to be restarted
-            dark: "rose-pine", // after changing the theme, the server needs to be restarted
-          },
-
-          transformers: [transformerNotationDiff(), transformerMetaHighlight()],
-        },
-      ],
-      rehypeUnwrapImages,
-      rehypeKatex,
+      rehypeKatex as any,
     ],
   },
   // https://docs.astro.build/en/guides/prefetch/

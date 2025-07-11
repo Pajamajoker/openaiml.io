@@ -84,13 +84,13 @@ Use it for prototypes, but keep a fallback AR model in production.
 ## 10. Under-the-hood deep-dive (full maths & intuition)  
 
 :::tip[Building Intuition]  
-Picture **Tom Cruise in *Mission Impossible*** staring at a CCTV frame so blurred you can barely spot shapes. He runs a high-tech “enhance” loop: each pass removes a slice of blur $\text{across the whole image}$ until the villain’s face snaps into razor-sharp focus. Mercury does the same for text $\text{every pass}$ guesses all hidden tokens at once, using new guesses as context for the next clean-up, until the sequence pops out pristine.  
+Picture **Tom Cruise in *Mission Impossible*** staring at a CCTV frame so blurred you can barely spot shapes. He runs a high-tech “enhance” loop: each pass removes a slice of blur across the whole image until the villain’s face snaps into razor-sharp focus. Mercury does the same for text – every pass guesses all hidden tokens at once, using new guesses as context for the next clean-up, until the sequence pops out pristine.  
 :::
 
 ### 10.1 Notation  
 
 * Sequence $x_0 = (x_0^{(1)},\dots,x_0^{(L)})$  
-* Mask symbol $\langle\text{MASK}\rangle$  
+* Mask symbol $MASK$  
 * Timesteps $t = 1,\dots,T$ (Mercury: $T \in \{12,20,30\}$)  
 * Noise rate $\beta_t$ and retention $\alpha_t = \prod_{s=1}^{t}(1-\beta_s)$
 
@@ -100,7 +100,7 @@ $$
 q(z_t^{(i)} \mid x_0^{(i)}) =
 \begin{cases}
 x_0^{(i)} & \text{w.p. } \alpha_t,\\
-\langle\text{MASK}\rangle & \text{w.p. } 1-\alpha_t.
+MASK & \text{w.p. } 1-\alpha_t.
 \end{cases}
 $$
 
