@@ -159,7 +159,7 @@ A well-executed proof-of-concept that opens an exciting direction for continuous
         <span class="text-pink-800 dark:text-pink-200 text-sm">
           Compare lifelong-learning Strategy A (SEAL self-edits + weight updates) versus Strategy B (retrieval-augmented generation with an external memory). For five everyday user queries, decide which strategy would respond better and explain your reasoning.
         </span>
-        <button onclick="copyText(this, `Answer the following question step-by-step. Then read your answer and identify any mistakes. Rewrite or correct the reasoning, and answer again. Don't just start over from scratch.`)" class="text-pink-600 hover:text-pink-700 dark:text-pink-300 dark:hover:text-pink-200 ml-2">
+        <button onclick="copyText(this, `Compare lifelong-learning Strategy A (SEAL self-edits + weight updates) versus Strategy B (retrieval-augmented generation with an external memory). For five everyday user queries, decide which strategy would respond better and explain your reasoning.`)" class="text-pink-600 hover:text-pink-700 dark:text-pink-300 dark:hover:text-pink-200 ml-2">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
             <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
             <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
@@ -173,7 +173,7 @@ A well-executed proof-of-concept that opens an exciting direction for continuous
         <span class="text-pink-800 dark:text-pink-200 text-sm">
          If SEAL keeps training on its own noisy or low-quality self-edits, won’t it just amplify errors over time? How can we avoid a garbage-in-garbage-out spiral in a continuous learning loop, and is this risk really serious?
         </span>
-        <button onclick="copyText(this, `Imagine you are designing a training routine for yourself as a language model. Write pseudocode (or bullet points) for an algorithm that takes a new text passage and a question, generates a self-edit to improve your knowledge, then updates your weights and finally checks the answer. Explain each step.`)" class="text-pink-600 hover:text-pink-700 dark:text-pink-300 dark:hover:text-pink-200 ml-2">
+        <button onclick="copyText(this, `If SEAL keeps training on its own noisy or low-quality self-edits, won’t it just amplify errors over time? How can we avoid a garbage-in-garbage-out spiral in a continuous learning loop, and is this risk really serious?`)" class="text-pink-600 hover:text-pink-700 dark:text-pink-300 dark:hover:text-pink-200 ml-2">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
             <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
             <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
