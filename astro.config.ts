@@ -97,7 +97,7 @@ export default defineConfig({
   site: "http://openaiml.io",
   vite: {
     build: {
-      sourcemap: true, // Source maps generation
+      sourcemap: import.meta.env.DEV, // Only enable sourcemaps in development
     },
     optimizeDeps: {
       exclude: ["@resvg/resvg-js"],
