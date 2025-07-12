@@ -82,12 +82,36 @@ export default defineConfig({
   ],
   markdown: {
     syntaxHighlight: false,
-    remarkPlugins: [
-      remarkMath,
-      remarkDirective,
-      remarkAdmonitions,
-    ],
+
+    remarkPlugins: [remarkReadingTime, remarkDirective, remarkAdmonitions, remarkMath],
+    remarkRehype: {
+      footnoteLabelProperties: {
+        className: [""],
+      },
+      footnoteBackContent: "⤴",
+    },
+
     rehypePlugins: [
+      [
+        rehypeExternalLinks,
+        {
+          rel: ["nofollow", "noreferrer"],
+          target: "_blank",
+        },
+      ],
+
+      [
+        rehypePrettyCode,
+        {
+          theme: {
+            light: "rose-pine-dawn", // after changing the theme, the server needs to be restarted
+            dark: "rose-pine", // after changing the theme, the server needs to be restarted
+          },
+
+          transformers: [transformerNotationDiff(), transformerMetaHighlight()],
+        },
+      ],
+      rehypeUnwrapImages,
       rehypeKatex as any,
     ],
   },
