@@ -144,7 +144,11 @@ A well-executed proof-of-concept that opens an exciting direction for continuous
 
 <div class="my-4 p-4 border-s-[0.625rem] rounded-lg border-pink-500 bg-pink-50 dark:bg-pink-900/20 shadow-sm space-y-6">
   <div class="flex items-center gap-3">
-    <img src="/icons/llama.png" alt="Llama Icon" class="w-8 h-8" />
+    <picture>
+      <source srcset="/icons/optimized/llama-32.png" media="(max-width: 639px)">
+      <source srcset="/icons/optimized/llama-40.png" media="(min-width: 640px)">
+      <img src="/icons/llama.png" alt="Llama Icon" class="w-8 h-8" loading="lazy" decoding="async" />
+    </picture>
     <div>
       <p class="font-bold text-base text-pink-700 dark:text-pink-300">Ask That Llama!</p>
     </div>

@@ -122,11 +122,18 @@ export default defineConfig({
   vite: {
     build: {
       sourcemap: import.meta.env.DEV, // Only enable sourcemaps in development
+      cssCodeSplit: false, // Bundle all CSS into a single file for better caching
     },
     optimizeDeps: {
       exclude: ["@resvg/resvg-js"],
     },
     plugins: [rawFonts([".ttf", ".woff"])],
+    css: {
+      devSourcemap: import.meta.env.DEV,
+    },
+  },
+  build: {
+    inlineStylesheets: "auto", // Inline critical CSS, defer non-critical
   },
   env: {
     schema: {
