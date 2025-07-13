@@ -27,6 +27,8 @@ const { Content } = await render(note);
 				src={note.data.logo}
 				alt={`${note.data.title} logo`}
 				class="mr-2 inline-block h-12 w-12 min-h-[2rem] object-contain dark:drop-shadow-[0_0_6px_rgba(255,255,255,0.9)]"
+				loading="lazy"
+				decoding="async"
 			/>
 		) : (
 			<Icon

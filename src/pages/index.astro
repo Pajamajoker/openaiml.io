@@ -96,7 +96,11 @@ const subscribeEndpoint = import.meta.env.SUBSCRIBE_ENDPOINT;
 			</div>
 			<p class="mt-6 text-base sm:text-lg text-center max-w-2xl mx-auto px-4">
 				<div class="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3">
-					<img src="/icons/llama.png" alt="Llama Icon" class="w-10 h-10 sm:w-10 sm:h-10" />
+					<picture>
+						<source srcset="/icons/optimized/llama-40.png" media="(min-width: 640px)">
+						<source srcset="/icons/optimized/llama-32.png" media="(max-width: 639px)">
+						<img src="/icons/llama.png" alt="Llama Icon" class="w-10 h-10 sm:w-10 sm:h-10" loading="lazy" decoding="async" />
+					</picture>
 					<span>Now Featuring <strong>'Ask That Llama!'</strong> section — A list of curated prompts to ask your favorite LLM for more learnings!</span>
 				</div>
 			</p>
