@@ -81,7 +81,7 @@ He launches an “enhance” loop: each pass removes a bit of blur **everywhere 
 Mercury’s text denoiser works the same way: each pass refines every masked token, then hands that stronger canvas to the following pass.  
 :::
 
-### 10.1  The objects we play with  
+### 8.1  The objects we play with  
 
 | Symbol | What it is | Plain-English meaning |
 |--------|------------|-----------------------|
@@ -92,7 +92,7 @@ Mercury’s text denoiser works the same way: each pass refines every masked tok
 | $\beta_t$ | scalar in (0,1) | probability of *losing* a token at step $t$ |
 | $\alpha_t$ | $\displaystyle\prod_{s=1}^t (1-\beta_s)$ | probability a token *survives* up to step $t$ |
 
-### 10.2  Forward process $q$: how we add noise  
+### 8.2  Forward process $q$: how we add noise  
 
 For each position $i$ we either keep the original token or replace it with a mask.
 
@@ -116,7 +116,7 @@ Step 10: half the page is covered.
 Keep going and the page becomes a solid wall of sticky notes.  
 :::
 
-### 10.3  Reverse model $p_\theta$: how we remove noise  
+### 8.3  Reverse model $p_\theta$: how we remove noise  
 
 A Transformer $f_\theta$ receives the current noisy sequence $z_t$ plus a learned embedding of the step index $t$.  
 It outputs a full-vocabulary logit vector for **every** position, turning into a categorical distribution
@@ -134,7 +134,7 @@ $$
 * Given the partially masked sentence and “how fuzzy” it currently is (the timestep), the network predicts what the original clean token was at every index.  
 * All positions are predicted **in one shot**, not left-to-right.
 
-### 10.4  Training loss: make the predictions match the truth  
+### 8.4  Training loss: make the predictions match the truth  
 
 $$
 \mathcal{L}(\theta)
@@ -161,7 +161,7 @@ $$
 * Very large $t$: the task is hopeless (all masks) so we also down-weight it.  
 * Middle $t$: the model learns the most, so we give these steps the highest weight.
 
-### 10.5  Sampling: turning pure noise into fluent text  
+### 8.5  Sampling: turning pure noise into fluent text  
 
 1. **Initial state**  
    $z_T = (\langle\text{MASK}\rangle,\dots,\langle\text{MASK}\rangle)$.  
@@ -173,7 +173,7 @@ $$
 
 At every pass we update **all** positions, so the cost is proportional to $T$ (≈20) instead of the length $L$ (hundreds or thousands).
 
-### 10.6  Why fewer passes can still beat left-to-right  
+### 8.6  Why fewer passes can still beat left-to-right  
 
 * Autoregressive decoding does one token per forward pass → $L$ passes.  
 * Diffusion does $T$ passes on the whole sequence → roughly 20 passes.  
@@ -181,19 +181,19 @@ At every pass we update **all** positions, so the cost is proportional to $T$ (�
 
 **Net outcome on an H100**: more than ten-fold increase in tokens per second.
 
-### 10.7  Self-conditioning trick  
+### 8.7  Self-conditioning trick  
 
 After each step we cache the logits and feed them (concatenated) back into the next step.  
 Think of it as giving the model a *sketch* of its previous guess so it can refine instead of restarting.
 
-### 10.8  Autoregression as a special case  
+### 8.8  Autoregression as a special case  
 
 If you let $\beta_t \to 0$ (almost no masking) and set $T = L$ (one step per position), the process reduces to standard left-to-right language modelling:  
 mask a single future slot, predict it, move on.  
 Classical autoregression is just the infinite-step, zero-noise corner of this broader diffusion family.
 
 
-## 10. Competitor spotlight – Mercury vs Gemini Diffusion  
+## 9. Competitor spotlight – Mercury vs Gemini Diffusion  
 
 | Feature                     | **Mercury Mini** | **Gemini Diffusion** |
 |-----------------------------|------------------|----------------------|
@@ -205,7 +205,7 @@ Classical autoregression is just the infinite-step, zero-noise corner of this br
 
 ***Gemini is faster on paper, but Mercury is the diffusion LM you can call and fine-tune today.***
 
-## 11. Open-source diffusion LMs you can self-host  
+## 10. Open-source diffusion LMs you can self-host  
 
 | Model                      | Size         | What you get               | Licence    |
 |----------------------------|--------------|----------------------------|------------|
@@ -216,7 +216,7 @@ Classical autoregression is just the infinite-step, zero-noise corner of this br
 
 Speeds hover in the 100–300 tok/s band on A100 great for experimentation, slower than Mercury.
 
-## 12. So why get excited about Mercury if OSS options already exist?  
+## 11. So why get excited about Mercury if OSS options already exist?  
 
 1. **Order-of-magnitude speed jump** 1 K + tok/s dwarfs today’s OSS diffusion LMs  
 2. **Serious system engineering** kernels, KV-paging, auto-step scheduling turn theory into wall-clock wins  
@@ -224,7 +224,7 @@ Speeds hover in the 100–300 tok/s band on A100 great for experimentation, slow
 4. **Vertical focus** trained for code, supports fill-in-the-middle, already ships IDE plug-ins  
 5. **Bridge from lab to prod** SLAs, on-prem, familiar API while diffusion tooling matures
 
-## 13. Why this belongs on your watch-list  
+## 12. Why this belongs on your watch-list  
 
 Diffusion LMs just crossed from neat research to **real-world latency killers**. Mercury proves parallel denoising can outrun every mainstream AR trick, and Gemini’s numbers show Big Tech smells the same opportunity. Whether you’re building an IDE copilot, chain-of-thought agent or multimodal RAG stack, watching Mercury (and the OSS projects chasing it) could hand you a **ten-fold latency dividend** the moment open weights or bigger checkpoints drop.  
 
@@ -323,4 +323,6 @@ function copyText(button, text) {
     }, 2000);
   });
 }
+
+
 </script>
